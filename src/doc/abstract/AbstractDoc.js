@@ -69,7 +69,7 @@ export default class AbstractDoc
        * Store all supported path extensions for import file name resolution when no extensions are present.
        * @type {string[]}
        */
-      this._pathExtensions = eventbus.triggerSync('tjsdoc:get:config').pathExtensions;
+      this._pathExtensions = eventbus.triggerSync('tjsdoc:data:config:get').pathExtensions;
 
       /**
        * Stores all values parsed from doc tags.
@@ -139,7 +139,7 @@ export default class AbstractDoc
          }
          else
          {
-            const config = this._eventbus.triggerSync('tjsdoc:get:config');
+            const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
 
             if (config.debug)
             {

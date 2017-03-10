@@ -26,7 +26,7 @@ export default class CoreDocResolver
     */
    resolve()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:get:config', false);
+      const config = this._eventbus.triggerSync('tjsdoc:data:config:get', false);
 
       this._eventbus.trigger('log:info:raw', 'resolve: extends chain');
       this._resolveExtendsChain();
@@ -64,7 +64,7 @@ export default class CoreDocResolver
     */
    _resolveAccess()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:get:config');
+      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
 
       const access = config.access || ['public', 'protected', 'private'];
       const autoPrivate = config.autoPrivate;
@@ -368,7 +368,7 @@ export default class CoreDocResolver
     */
    _resolveUndocumentIdentifier()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:get:config');
+      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
 
       if (!config.undocumentIdentifier)
       {
@@ -383,7 +383,7 @@ export default class CoreDocResolver
     */
    _resolveUnexportIdentifier()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:get:config');
+      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
 
       if (!config.unexportIdentifier)
       {
