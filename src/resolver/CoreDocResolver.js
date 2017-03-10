@@ -101,7 +101,7 @@ export default class CoreDocResolver
 
       if (docs.length === 0) { return; }
 
-      let commonPath = this._eventbus.triggerSync('typhonjs:util:file:common:mapped:path', 'longname', ...docs);
+      let commonPath = this._eventbus.triggerSync('typhonjs:util:file:path:common:mapped', 'longname', ...docs);
 
       if (commonPath === '') { return; }
 
