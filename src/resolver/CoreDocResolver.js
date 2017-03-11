@@ -69,7 +69,7 @@ export default class CoreDocResolver
       const access = config.access || ['public', 'protected', 'private'];
       const autoPrivate = config.autoPrivate;
 
-      this._eventbus.triggerSync('tjsdoc:docs:query').update(function()
+      this._eventbus.triggerSync('tjsdoc:data:docdb:query').update(function()
       {
          if (!this.access)
          {
@@ -96,7 +96,7 @@ export default class CoreDocResolver
     */
    _resolveCommonPath(config)
    {
-      const docs = this._eventbus.triggerSync('tjsdoc:docs:find', { kind: { '!is': 'memory' } },
+      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: { '!is': 'memory' } },
        { kind: { '!is': 'external' } });
 
       if (docs.length === 0) { return; }
@@ -134,13 +134,13 @@ export default class CoreDocResolver
     */
    _resolveDuplication()
    {
-      const docs = this._eventbus.triggerSync('tjsdoc:docs:find', { kind: 'member' });
+      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: 'member' });
       const ignoreId = [];
 
       for (const doc of docs)
       {
          // member duplicate with getter/setter/method. when it, remove member. getter/setter/method are high priority.
-         const nonMemberDup = this._eventbus.triggerSync('tjsdoc:docs:find',
+         const nonMemberDup = this._eventbus.triggerSync('tjsdoc:data:docdb:find',
           { longname: doc.longname, kind: { '!is': 'member' } });
 
          if (nonMemberDup.length)
@@ -149,7 +149,7 @@ export default class CoreDocResolver
             continue;
          }
 
-         const dup = this._eventbus.triggerSync('tjsdoc:docs:find', { longname: doc.longname, kind: 'member' });
+         const dup = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { longname: doc.longname, kind: 'member' });
 
          if (dup.length > 1)
          {
@@ -162,7 +162,7 @@ export default class CoreDocResolver
          }
       }
 
-      this._eventbus.triggerSync('tjsdoc:docs:query', { ___id: ignoreId }).update(function()
+      this._eventbus.triggerSync('tjsdoc:data:docdb:query', { ___id: ignoreId }).update(function()
       {
          this.ignore = true;
 
@@ -196,7 +196,7 @@ export default class CoreDocResolver
 
          do
          {
-            const superClassDoc = this._eventbus.triggerSync('tjsdoc:docs:find:by:name', doc.extends[0])[0];
+            const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', doc.extends[0])[0];
 
             if (superClassDoc)
             {
@@ -218,7 +218,7 @@ export default class CoreDocResolver
          if (chains.length)
          {
             // direct subclass
-            let superClassDoc = this._eventbus.triggerSync('tjsdoc:docs:find:by:name', chains[0])[0];
+            let superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', chains[0])[0];
 
             if (superClassDoc)
             {
@@ -230,7 +230,7 @@ export default class CoreDocResolver
             // indirect subclass
             for (const superClassLongname of chains.slice(1))
             {
-               superClassDoc = this._eventbus.triggerSync('tjsdoc:docs:find:by:name', superClassLongname)[0];
+               superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
 
                if (superClassDoc)
                {
@@ -243,7 +243,7 @@ export default class CoreDocResolver
             // indirect implements and mixes
             for (const superClassLongname of chains)
             {
-               superClassDoc = this._eventbus.triggerSync('tjsdoc:docs:find:by:name', superClassLongname)[0];
+               superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
 
                if (!superClassDoc) { continue; }
 
@@ -268,7 +268,7 @@ export default class CoreDocResolver
          // direct implemented (like direct subclass)
          for (const superClassLongname of selfDoc.implements || [])
          {
-            const superClassDoc = this._eventbus.triggerSync('tjsdoc:docs:find:by:name', superClassLongname)[0];
+            const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
             if (!superClassDoc._custom_direct_implemented) { superClassDoc._custom_direct_implemented = []; }
@@ -279,7 +279,7 @@ export default class CoreDocResolver
          // indirect implemented (like indirect subclass)
          for (const superClassLongname of selfDoc._custom_indirect_implements || [])
          {
-            const superClassDoc = this._eventbus.triggerSync('tjsdoc:docs:find:by:name', superClassLongname)[0];
+            const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
             if (!superClassDoc._custom_indirect_implemented) { superClassDoc._custom_indirect_implemented = []; }
@@ -288,7 +288,7 @@ export default class CoreDocResolver
          }
       };
 
-      const docs = this._eventbus.triggerSync('tjsdoc:docs:find', { kind: 'class' });
+      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: 'class' });
 
       for (const doc of docs)
       {
@@ -304,17 +304,17 @@ export default class CoreDocResolver
     */
    _resolveIgnore()
    {
-      const docs = this._eventbus.triggerSync('tjsdoc:docs:find', { ignore: true });
+      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { ignore: true });
 
       for (const doc of docs)
       {
          const longname = doc.longname.replace(/[$]/g, '\\$');
          const regex = new RegExp(`^${longname}[.~#]`);
 
-         this._eventbus.triggerSync('tjsdoc:docs:query', { longname: { regex } }).remove();
+         this._eventbus.triggerSync('tjsdoc:data:docdb:query', { longname: { regex } }).remove();
       }
 
-      this._eventbus.triggerSync('tjsdoc:docs:query', { ignore: true }).remove();
+      this._eventbus.triggerSync('tjsdoc:data:docdb:query', { ignore: true }).remove();
    }
 
    /**
@@ -336,7 +336,7 @@ export default class CoreDocResolver
    {
       const eventbus = this._eventbus;
 
-      eventbus.triggerSync('tjsdoc:docs:query', { 'export': false }).update(function()
+      eventbus.triggerSync('tjsdoc:data:docdb:query', { 'export': false }).update(function()
       {
          const doc = this;
          const childNames = [];
@@ -348,7 +348,7 @@ export default class CoreDocResolver
 
          for (const childName of childNames)
          {
-            const childDoc = eventbus.triggerSync('tjsdoc:docs:find', { longname: childName })[0];
+            const childDoc = eventbus.triggerSync('tjsdoc:data:docdb:find', { longname: childName })[0];
 
             if (!childDoc) { continue; }
 
@@ -372,7 +372,7 @@ export default class CoreDocResolver
 
       if (!config.undocumentIdentifier)
       {
-         this._eventbus.triggerSync('tjsdoc:docs:query', { undocument: true }).update({ ignore: true });
+         this._eventbus.triggerSync('tjsdoc:data:docdb:query', { undocument: true }).update({ ignore: true });
       }
    }
 
@@ -387,7 +387,7 @@ export default class CoreDocResolver
 
       if (!config.unexportIdentifier)
       {
-         this._eventbus.triggerSync('tjsdoc:docs:query', { 'export': false }).update({ ignore: true });
+         this._eventbus.triggerSync('tjsdoc:data:docdb:query', { 'export': false }).update({ ignore: true });
       }
    }
 }

@@ -80,7 +80,7 @@ export default class AbstractDoc
 
       Reflect.defineProperty(this._node, 'doc', { value: this });
 
-      this._value.__docId__ = this._eventbus.triggerSync('tjsdoc:ast:nodes:add', node);
+      this._value.__docId__ = this._eventbus.triggerSync('tjsdoc:data:ast:nodes:add', node);
 
       // If a module / file ID is defined then set it.
       this._value.__esModuleId__ = moduleID;
@@ -572,7 +572,7 @@ export default class AbstractDoc
 
          if (!result.typeText || !result.paramName)
          {
-            this._eventbus.trigger('tjsdoc:invalid:code:add',
+            this._eventbus.trigger('tjsdoc:system:invalid:code:add',
              { filePath: this._pathResolver.absolutePath, node: this._node });
 
             continue;
