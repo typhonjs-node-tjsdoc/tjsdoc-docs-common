@@ -18,7 +18,7 @@ export default class CoreDocResolver
        */
       this._eventbus = ev.eventbus;
 
-      this._eventbus.on('tjsdoc:core:doc:resolver:resolve', this.resolve, this);
+      this._eventbus.on('tjsdoc:system:resolver:docdb:resolve', this.resolve, this);
    }
 
    /**
