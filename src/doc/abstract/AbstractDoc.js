@@ -85,6 +85,8 @@ export default class AbstractDoc
       // If a module / file ID is defined then set it.
       this._value.__esModuleId__ = moduleID;
 
+      this._value.filePath = this._pathResolver.filePath;
+
       // All docs are considered static until set otherwise.
       this._value.static = true;
 

@@ -26,7 +26,7 @@ export default class CoreDocResolver
     */
    resolve()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:data:config:get', false);
+      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
 
       this._eventbus.trigger('log:info:raw', 'resolve: extends chain');
       this._resolveExtendsChain();
@@ -105,11 +105,7 @@ export default class CoreDocResolver
 
       if (commonPath === '') { return; }
 
-      // Must rewrite `_dirPath` with the removed common path otherwise resolving actual files will fail.
-      config._dirPath = path.resolve(config._dirPath, commonPath);
-
       this._eventbus.trigger('log:info:raw', `common path removed: ${commonPath}`);
-      this._eventbus.trigger('log:info:raw', `new config._dirPath: ${config._dirPath}`);
 
       // Escape commonPath.
       commonPath = commonPath.replace(/[\\]/g, '\\');
