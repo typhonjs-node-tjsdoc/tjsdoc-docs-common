@@ -226,7 +226,8 @@ export default class AbstractDoc
       }
 
       // find in import.
-      const importPath = this._eventbus.triggerSync('tjsdoc:ast:find:path:import:declaration', this._ast, className);
+      const importPath = this._eventbus.triggerSync('tjsdoc:system:ast:path:import:declaration:find', this._ast,
+       className);
 
       if (importPath) { return this._resolveLongname(className); }
 
@@ -262,7 +263,7 @@ export default class AbstractDoc
     */
    _resolveLongname(name)
    {
-      const importPath = this._eventbus.triggerSync('tjsdoc:ast:find:path:import:declaration', this._ast, name);
+      const importPath = this._eventbus.triggerSync('tjsdoc:system:ast:path:import:declaration:find', this._ast, name);
 
       if (!importPath) { return name; }
 
@@ -391,7 +392,7 @@ export default class AbstractDoc
     */
    _$decorator()
    {
-      this._value.decorators = this._eventbus.triggerSync('tjsdoc:ast:find:decorators', this._node);
+      this._value.decorators = this._eventbus.triggerSync('tjsdoc:system:ast:decorators:find', this._node);
    }
 
    /**
@@ -521,7 +522,7 @@ export default class AbstractDoc
     */
    _$lineNumber()
    {
-      this._value.lineNumber = this._eventbus.triggerSync('tjsdoc:ast:find:line:number:start', this._node);
+      this._value.lineNumber = this._eventbus.triggerSync('tjsdoc:system:ast:line:number:start:find', this._node);
    }
 
    /**

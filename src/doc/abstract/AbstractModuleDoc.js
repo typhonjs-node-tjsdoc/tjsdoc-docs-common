@@ -10,7 +10,7 @@ export default class AbstractModuleDoc extends AbstractDoc
     */
    _$export()
    {
-      this._value.export = this._eventbus.triggerSync('tjsdoc:ast:find:parent:export', this._node);
+      this._value.export = this._eventbus.triggerSync('tjsdoc:system:ast:parent:export:find', this._node);
    }
 
    /**
@@ -34,7 +34,7 @@ export default class AbstractModuleDoc extends AbstractDoc
 
       this._ensureApplied('_$name');
 
-      this._value.importStyle = this._eventbus.triggerSync('tjsdoc:ast:find:import:style', this._node,
+      this._value.importStyle = this._eventbus.triggerSync('tjsdoc:system:ast:import:style:find', this._node,
        this._value.name);
    }
 }
