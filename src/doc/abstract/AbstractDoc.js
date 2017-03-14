@@ -436,7 +436,7 @@ export default class AbstractDoc
 
       for (const value of values)
       {
-         const result = this._eventbus.triggerSync('tjsdoc:parse:param', value,
+         const result = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value,
           { type: true, name: false, desc: true });
 
          this._value.emits.push({ types: result.types, description: result.description });
@@ -538,7 +538,7 @@ export default class AbstractDoc
 
       for (const value of values)
       {
-         const result = this._eventbus.triggerSync('tjsdoc:parse:param', value,
+         const result = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value,
           { type: true, name: false, desc: true });
 
          this._value.listens.push({ types: result.types, description: result.description });
@@ -571,7 +571,7 @@ export default class AbstractDoc
 
       for (const value of values)
       {
-         const result = this._eventbus.triggerSync('tjsdoc:parse:param:value', value);
+         const result = this._eventbus.triggerSync('tjsdoc:system:parser:param:value:parse', value);
 
          if (!result.typeText || !result.paramName)
          {
@@ -581,7 +581,7 @@ export default class AbstractDoc
             continue;
          }
 
-         this._value.params.push(this._eventbus.triggerSync('tjsdoc:parse:param:from:value', result));
+         this._value.params.push(this._eventbus.triggerSync('tjsdoc:system:parser:param:from:value:parse', result));
       }
    }
 
@@ -624,7 +624,7 @@ export default class AbstractDoc
 
       for (const value of values)
       {
-         this._value.properties.push(this._eventbus.triggerSync('tjsdoc:parse:param', value));
+         this._value.properties.push(this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value));
       }
    }
 
@@ -648,7 +648,7 @@ export default class AbstractDoc
 
       if (!value) { return; }
 
-      this._value.return = this._eventbus.triggerSync('tjsdoc:parse:param', value,
+      this._value.return = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value,
        { type: true, name: false, desc: true });
    }
 
@@ -714,7 +714,7 @@ export default class AbstractDoc
 
       for (const value of values)
       {
-         const result = this._eventbus.triggerSync('tjsdoc:parse:param', value,
+         const result = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value,
           { type: true, name: false, desc: true });
 
          this._value.throws.push({ types: result.types, description: result.description });
@@ -730,7 +730,7 @@ export default class AbstractDoc
 
       if (!value) { return; }
 
-      this._value.type = this._eventbus.triggerSync('tjsdoc:parse:param', value,
+      this._value.type = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value,
        { type: true, name: false, desc: false });
    }
 

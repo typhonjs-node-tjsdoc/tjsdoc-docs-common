@@ -41,7 +41,7 @@ export default class AbstractTypedefDoc extends AbstractDoc
 
       for (const tag of tags)
       {
-         name = this._eventbus.triggerSync('tjsdoc:parse:param:value', tag.tagValue,
+         name = this._eventbus.triggerSync('tjsdoc:system:parser:param:value:parse', tag.tagValue,
           { type: true, name: true, desc: false }).paramName;
       }
 
@@ -55,7 +55,8 @@ export default class AbstractTypedefDoc extends AbstractDoc
 
       if (!value) { return; }
 
-      const result = this._eventbus.triggerSync('tjsdoc:parse:param', value, { type: true, name: true, desc: false });
+      const result = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', value,
+       { type: true, name: true, desc: false });
 
       Reflect.deleteProperty(result, 'description');
       Reflect.deleteProperty(result, 'nullable');

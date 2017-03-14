@@ -64,8 +64,8 @@ export default class ExternalDoc extends AbstractDoc
 
       for (const tag of tags)
       {
-         const { typeText, paramDesc } = this._eventbus.triggerSync('tjsdoc:parse:param:value', tag.tagValue,
-          { type: true, name: false, desc: true });
+         const { typeText, paramDesc } = this._eventbus.triggerSync('tjsdoc:system:parser:param:value:parse',
+          tag.tagValue, { type: true, name: false, desc: true });
 
          name = typeText;
 

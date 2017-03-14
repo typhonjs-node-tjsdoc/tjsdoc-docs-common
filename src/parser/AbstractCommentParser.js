@@ -25,8 +25,8 @@ export default class AbstractCommentParser
    {
       const eventbus = ev.eventbus;
 
-      eventbus.on('tjsdoc:get:comment:node:value', this.getCommentValue, this);
-      eventbus.on('tjsdoc:parse:comment', this.parse, this);
+      eventbus.on('tjsdoc:system:parser:comment:node:value:get', this.getCommentValue, this);
+      eventbus.on('tjsdoc:system:parser:comment:parse', this.parse, this);
    }
 
    /**

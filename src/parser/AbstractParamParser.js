@@ -56,12 +56,12 @@ export default class AbstractParamParser
        */
       this._eventbus = ev.eventbus;
 
-      this._eventbus.on('tjsdoc:guess:params', this.guessParams, this);
-      this._eventbus.on('tjsdoc:guess:return:param', this.guessReturnParam, this);
-      this._eventbus.on('tjsdoc:guess:type', this.guessType, this);
-      this._eventbus.on('tjsdoc:parse:param', this.parseParam, this);
-      this._eventbus.on('tjsdoc:parse:param:from:value', this.parseParamFromValue, this);
-      this._eventbus.on('tjsdoc:parse:param:value', this.parseParamValue, this);
+      this._eventbus.on('tjsdoc:system:parser:param:guess', this.guessParams, this);
+      this._eventbus.on('tjsdoc:system:parser:param:return:guess', this.guessReturnParam, this);
+      this._eventbus.on('tjsdoc:system:parser:param:type:guess', this.guessType, this);
+      this._eventbus.on('tjsdoc:system:parser:param:parse', this.parseParam, this);
+      this._eventbus.on('tjsdoc:system:parser:param:from:value:parse', this.parseParamFromValue, this);
+      this._eventbus.on('tjsdoc:system:parser:param:value:parse', this.parseParamValue, this);
    }
 
    /**

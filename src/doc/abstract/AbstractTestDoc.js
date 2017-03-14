@@ -44,7 +44,7 @@ export default class AbstractTestDoc extends AbstractDoc
 
       for (const value of values)
       {
-         const { typeText } = this._eventbus.triggerSync('tjsdoc:parse:param:value', value,
+         const { typeText } = this._eventbus.triggerSync('tjsdoc:system:parser:param:value:parse', value,
           { type: true, name: false, desc: false });
 
          this._value.testTargets.push(typeText);
