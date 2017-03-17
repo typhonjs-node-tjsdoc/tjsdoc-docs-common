@@ -15,19 +15,21 @@ export default class AbstractDoc
    /**
     * create instance.
     *
-    * @param {number|null}    moduleID - The docID for the corresponding module / file.
+    * @param {number}            docID - The docID for this doc.
     *
-    * @param {AST}            ast - The AST that contains this doc.
+    * @param {number|null}       moduleID - The docID for the corresponding module / file.
     *
-    * @param {ASTNode}        node - The AST node for this doc object.
+    * @param {AST}               ast - The AST that contains this doc.
     *
-    * @param {PathResolver}   pathResolver - The file path resolver that contains this doc.
+    * @param {ASTNode}           node - The AST node for this doc object.
     *
-    * @param {Tag[]}          commentTags - The comment tags associated with this doc object.
+    * @param {PathResolver}      pathResolver - The file path resolver that contains this doc.
     *
-    * @param {EventProxy}     eventbus - An event proxy for the main eventbus.
+    * @param {Tag[]}             commentTags - The comment tags associated with this doc object.
+    *
+    * @param {EventProxy}        eventbus - An event proxy for the main eventbus.
     */
-   constructor(moduleID, ast, node, pathResolver, commentTags = [], eventbus)
+   constructor(docID, moduleID, ast, node, pathResolver, commentTags = [], eventbus)
    {
       /**
        * The AST that contains this doc.
@@ -80,7 +82,7 @@ export default class AbstractDoc
 
       Reflect.defineProperty(this._node, 'doc', { value: this });
 
-      this._value.__docId__ = this._eventbus.triggerSync('tjsdoc:data:ast:nodes:add', node);
+      this._value.__docId__ = docID;
 
       // If a module / file ID is defined then set it.
       this._value.__esModuleId__ = moduleID;

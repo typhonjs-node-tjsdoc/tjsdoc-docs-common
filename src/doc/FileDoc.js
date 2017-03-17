@@ -10,6 +10,8 @@ export default class FileDoc extends AbstractDoc
    /**
     * Create instance. File docs are the module, so pass `null` as the module ID to AbstractDoc.
     *
+    * @param {number}         docID - The docID for this doc.
+    *
     * @param {AST}            ast - this is AST that contains this doc.
     *
     * @param {ASTNode}        node - this is self node.
@@ -20,9 +22,9 @@ export default class FileDoc extends AbstractDoc
     *
     * @param {EventProxy}     eventbus - An event proxy for the main eventbus.
     */
-   constructor(ast, node, pathResolver, commentTags = [], eventbus)
+   constructor(docID, ast, node, pathResolver, commentTags = [], eventbus)
    {
-      super(null, ast, node, pathResolver, commentTags, eventbus);
+      super(docID, null, ast, node, pathResolver, commentTags, eventbus);
    }
 
    /** specify file content to value.content */

@@ -8,6 +8,8 @@ export default class MemoryDoc extends AbstractDoc
    /**
     * Create instance. Memory docs are the module, so pass `null` as the module ID to AbstractDoc.
     *
+    * @param {number}         docID - The docID for this doc.
+    *
     * @param {AST}            ast - this is AST that contains this doc.
     *
     * @param {ASTNode}        node - this is self node.
@@ -20,9 +22,9 @@ export default class MemoryDoc extends AbstractDoc
     *
     * @param {String}         code - this is the in memory code that defines this doc.
     */
-   constructor(ast, node, pathResolver, commentTags = [], eventbus, code)
+   constructor(docID, ast, node, pathResolver, commentTags = [], eventbus, code)
    {
-      super(null, ast, node, pathResolver, commentTags, eventbus);
+      super(docID, null, ast, node, pathResolver, commentTags, eventbus);
 
       // Must set content directly as all value properties are resolved in AbstractDoc constructor.
       this._value.content = code;
