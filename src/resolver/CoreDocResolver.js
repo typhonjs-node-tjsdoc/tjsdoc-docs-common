@@ -1,5 +1,3 @@
-import path from 'path';
-
 /**
  * Resolves various core properties in DocDB / TaffyDB data.
  */
@@ -52,7 +50,7 @@ export default class CoreDocResolver
       if (config.removeCommonPath)
       {
          this._eventbus.trigger('log:info:raw', 'resolve: removing common path');
-         this._resolveCommonPath(config);
+         this._resolveCommonPath();
       }
    }
 
@@ -90,11 +88,9 @@ export default class CoreDocResolver
    /**
     * Removes any common path from all docs that are not `memory` or `external`.
     *
-    * @param {TJSDocConfig}   config - The TJSDoc config in write mode. _dirPath modified.
-    *
     * @private
     */
-   _resolveCommonPath(config)
+   _resolveCommonPath()
    {
       const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: { '!is': 'memory' } },
        { kind: { '!is': 'external' } });
