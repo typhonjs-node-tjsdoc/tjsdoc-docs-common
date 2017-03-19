@@ -177,6 +177,32 @@ export default class CoreDocResolver
     */
    _resolveExtendsChain()
    {
+      /**
+       * Tracks which docs need to initialize `_custom_<X>` lists.
+       * @type {{}}
+       */
+      const seenData = {};
+
+      /**
+       * Stores data in `seenData` by doc.longname -> `_custom_<X>` list name.
+       *
+       * @param {DocObject}   doc - DocObject to test.
+       *
+       * @param {string}      type - `_custom_<X>` list name.
+       *
+       * @returns {boolean} Result if whether the custom list name for the given doc object has already been seen.
+       */
+      const seen = (doc, type) =>
+      {
+         const docData = seenData[doc.longname] || {};
+
+         const typeSeen = docData[type] || false;
+
+         docData[type] = true;
+
+         return typeSeen;
+      };
+
       const extendsChain = (doc) =>
       {
          if (!doc.extends) { return; }
@@ -214,7 +240,7 @@ export default class CoreDocResolver
 
             if (superClassDoc)
             {
-               if (!superClassDoc._custom_direct_subclasses) { superClassDoc._custom_direct_subclasses = []; }
+               if (!seen(superClassDoc, '_custom_direct_subclasses')) { superClassDoc._custom_direct_subclasses = []; }
 
                superClassDoc._custom_direct_subclasses.push(selfDoc.longname);
             }
@@ -226,7 +252,10 @@ export default class CoreDocResolver
 
                if (superClassDoc)
                {
-                  if (!superClassDoc._custom_indirect_subclasses) { superClassDoc._custom_indirect_subclasses = []; }
+                  if (!seen(superClassDoc, '_custom_indirect_subclasses'))
+                  {
+                     superClassDoc._custom_indirect_subclasses = [];
+                  }
 
                   superClassDoc._custom_indirect_subclasses.push(selfDoc.longname);
                }
@@ -242,7 +271,7 @@ export default class CoreDocResolver
                // indirect implements
                if (superClassDoc.implements)
                {
-                  if (!selfDoc._custom_indirect_implements) { selfDoc._custom_indirect_implements = []; }
+                  if (!seen(selfDoc, '_custom_indirect_implements')) { selfDoc._custom_indirect_implements = []; }
 
                   selfDoc._custom_indirect_implements.push(...superClassDoc.implements);
                }
@@ -263,7 +292,8 @@ export default class CoreDocResolver
             const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
-            if (!superClassDoc._custom_direct_implemented) { superClassDoc._custom_direct_implemented = []; }
+
+            if (!seen(superClassDoc, '_custom_direct_implemented')) { superClassDoc._custom_direct_implemented = []; }
 
             superClassDoc._custom_direct_implemented.push(selfDoc.longname);
          }
@@ -274,7 +304,11 @@ export default class CoreDocResolver
             const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
-            if (!superClassDoc._custom_indirect_implemented) { superClassDoc._custom_indirect_implemented = []; }
+
+            if (!seen(superClassDoc, '_custom_indirect_implemented'))
+            {
+               superClassDoc._custom_indirect_implemented = [];
+            }
 
             superClassDoc._custom_indirect_implemented.push(selfDoc.longname);
          }
