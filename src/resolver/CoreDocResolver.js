@@ -26,6 +26,13 @@ export default class CoreDocResolver
    {
       const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
 
+      // Must remove common path first as `longname`, `memberof, and `name` are modified.
+      if (config.removeCommonPath)
+      {
+         this._eventbus.trigger('log:info:raw', 'resolve: removing common path');
+         this._resolveCommonPath();
+      }
+
       this._eventbus.trigger('log:info:raw', 'resolve: extends chain');
       this._resolveExtendsChain();
 
@@ -46,12 +53,6 @@ export default class CoreDocResolver
 
       this._eventbus.trigger('log:info:raw', 'resolve: ignore');
       this._resolveIgnore();
-
-      if (config.removeCommonPath)
-      {
-         this._eventbus.trigger('log:info:raw', 'resolve: removing common path');
-         this._resolveCommonPath();
-      }
    }
 
    /**
