@@ -223,6 +223,7 @@ export default class CoreDocResolver
                if (superClassDoc.longname === selfDoc.longname) { break; }
 
                chains.push(superClassDoc.longname);
+
                doc = superClassDoc;
             }
             else
@@ -243,7 +244,14 @@ export default class CoreDocResolver
             {
                if (!seen(superClassDoc, '_custom_direct_subclasses')) { superClassDoc._custom_direct_subclasses = []; }
 
+               if (!seen(superClassDoc, '_custom_dependent_file_paths'))
+               {
+                  superClassDoc._custom_dependent_file_paths = [];
+               }
+
                superClassDoc._custom_direct_subclasses.push(selfDoc.longname);
+
+               superClassDoc._custom_dependent_file_paths.push(selfDoc.filePath);
             }
 
             // indirect subclass
@@ -258,7 +266,14 @@ export default class CoreDocResolver
                      superClassDoc._custom_indirect_subclasses = [];
                   }
 
+                  if (!seen(superClassDoc, '_custom_dependent_file_paths'))
+                  {
+                     superClassDoc._custom_indirect_subclasses = [];
+                  }
+
                   superClassDoc._custom_indirect_subclasses.push(selfDoc.longname);
+
+                  superClassDoc._custom_dependent_file_paths.push(selfDoc.filePath);
                }
             }
 
@@ -295,8 +310,11 @@ export default class CoreDocResolver
             if (!superClassDoc) { continue; }
 
             if (!seen(superClassDoc, '_custom_direct_implemented')) { superClassDoc._custom_direct_implemented = []; }
+            if (!seen(superClassDoc, '_custom_dependent_file_paths')) { superClassDoc._custom_direct_implemented = []; }
 
             superClassDoc._custom_direct_implemented.push(selfDoc.longname);
+
+            superClassDoc._custom_dependent_file_paths.push(selfDoc.filePath);
          }
 
          // indirect implemented (like indirect subclass)
@@ -311,7 +329,14 @@ export default class CoreDocResolver
                superClassDoc._custom_indirect_implemented = [];
             }
 
+            if (!seen(superClassDoc, '_custom_dependent_file_paths'))
+            {
+               superClassDoc._custom_dependent_file_paths = [];
+            }
+
             superClassDoc._custom_indirect_implemented.push(selfDoc.longname);
+
+            superClassDoc._custom_dependent_file_paths.push(selfDoc.filePath);
          }
       };
 
@@ -321,6 +346,26 @@ export default class CoreDocResolver
       {
          extendsChain(doc);
          implemented(doc);
+      }
+
+      // Add _custom_dependent_file_paths to all file docs adding any dependencies parsed for classes.
+      for (const doc of docs)
+      {
+         if (Array.isArray(doc._custom_dependent_file_paths))
+         {
+            const fileDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find',
+             { kind: 'file', filePath: doc.filePath })[0];
+
+            if (!seen(fileDoc, '_custom_dependent_file_paths')) { fileDoc._custom_dependent_file_paths = []; }
+
+            for (const filePath of doc._custom_dependent_file_paths)
+            {
+               if (fileDoc._custom_dependent_file_paths.indexOf(filePath) === -1)
+               {
+                  fileDoc._custom_dependent_file_paths.push(filePath);
+               }
+            }
+         }
       }
    }
 
