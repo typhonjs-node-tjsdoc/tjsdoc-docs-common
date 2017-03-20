@@ -185,7 +185,9 @@ export default class CoreDocResolver
       const seenData = {};
 
       /**
-       * Stores data in `seenData` by doc.longname -> `_custom_<X>` list name.
+       * Stores data in `seenData` by doc.longname -> `_custom_<X>` list name tracking which docs need to initialize
+       * `_custom_<X>` lists. This is necessary to reinitialize as resolving can occur multiple times across the
+       * same data.
        *
        * @param {DocObject}   doc - DocObject to test.
        *
@@ -195,7 +197,9 @@ export default class CoreDocResolver
        */
       const seen = (doc, type) =>
       {
-         const docData = seenData[doc.longname] || {};
+         if (typeof seenData[doc.longname] !== 'object') { seenData[doc.longname] = {}; }
+
+         const docData = seenData[doc.longname];
 
          const typeSeen = docData[type] || false;
 
@@ -268,7 +272,7 @@ export default class CoreDocResolver
 
                   if (!seen(superClassDoc, '_custom_dependent_file_paths'))
                   {
-                     superClassDoc._custom_indirect_subclasses = [];
+                     superClassDoc._custom_dependent_file_paths = [];
                   }
 
                   superClassDoc._custom_indirect_subclasses.push(selfDoc.longname);
@@ -310,7 +314,11 @@ export default class CoreDocResolver
             if (!superClassDoc) { continue; }
 
             if (!seen(superClassDoc, '_custom_direct_implemented')) { superClassDoc._custom_direct_implemented = []; }
-            if (!seen(superClassDoc, '_custom_dependent_file_paths')) { superClassDoc._custom_direct_implemented = []; }
+
+            if (!seen(superClassDoc, '_custom_dependent_file_paths'))
+            {
+               superClassDoc._custom_dependent_file_paths = [];
+            }
 
             superClassDoc._custom_direct_implemented.push(selfDoc.longname);
 
