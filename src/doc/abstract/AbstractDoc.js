@@ -80,8 +80,6 @@ export default class AbstractDoc
        */
       this._value = {};
 
-      Reflect.defineProperty(this._node, 'doc', { value: this });
-
       this._value.__docId__ = docID;
 
       // If a module / file ID is defined then set it.
@@ -101,6 +99,9 @@ export default class AbstractDoc
 
       this._apply();
       this._processCommentTags();
+
+      // Save doc name in the AST node such that it is accessible for MemberDoc / MethodDoc `_$memberof`.
+      this._node._docName = this._value.name;
    }
 
    /**
