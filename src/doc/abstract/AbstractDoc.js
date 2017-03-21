@@ -101,7 +101,7 @@ export default class AbstractDoc
       this._processCommentTags();
 
       // Save doc name in the AST node such that it is accessible for MemberDoc / MethodDoc `_$memberof`.
-      this._node._docName = this._value.name;
+      this._node._tjsdocDocName = this._value.name;
    }
 
    /**
