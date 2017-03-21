@@ -102,6 +102,8 @@ export default class AbstractDoc
 
       // Save doc name in the AST node such that it is accessible for MemberDoc / MethodDoc `_$memberof`.
       this._node._tjsdocDocName = this._value.name;
+
+      this._value.node = this._node;
    }
 
    /**
@@ -251,10 +253,30 @@ export default class AbstractDoc
       return tag ? tag.tagValue : null;
    }
 
+   /**
+    * Deletes all non-function keys in this object including all collated data. The `_value` object is however
+    * retained and returned, but deleted along with all other local non-function keys of `this` to ensure that it goes
+    * out of scope. This prevents a copy of `_value` when loading into a `DocDB` instance.
+    *
+    * @returns {{}}
+    */
+   destroy()
+   {
+      const value = this._value;
+
+      // Delete all local keys that are not a function.
+      for (const key of Object.keys(this))
+      {
+         if (typeof this[key] !== 'function') { delete this[key]; }
+      }
+
+      return value;
+   }
+
    /** @type {DocObject[]} */
    get value()
    {
-      return JSON.parse(JSON.stringify(this._value));
+      return this._value;
    }
 
    /**
