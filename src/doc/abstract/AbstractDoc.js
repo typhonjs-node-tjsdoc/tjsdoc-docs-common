@@ -66,12 +66,18 @@ export default class AbstractDoc
        */
       this._eventbus = eventbus;
 
-      //
       /**
        * Store all supported path extensions for import file name resolution when no extensions are present.
        * @type {string[]}
        */
       this._pathExtensions = eventbus.triggerSync('tjsdoc:data:config:get').pathExtensions;
+
+      /**
+       * Provides an object hash storing which dynamic methods have already been applied.
+       * @type {{}}
+       * @private
+       */
+      this._appliedMethods = {};
 
       /**
        * Stores all values parsed from doc tags.
@@ -85,17 +91,14 @@ export default class AbstractDoc
       // If a module / file ID is defined then set it.
       this._value.__esModuleId__ = moduleID;
 
+      // Specially apply kind and name methods now so that it appears at the top of the doc object data.
+      this._ensureApplied('_$kind');
+      this._ensureApplied('_$name');
+
       this._value.filePath = this._pathResolver.filePath;
 
       // All docs are considered static until set otherwise.
       this._value.static = true;
-
-      /**
-       * Provides an object hash storing which dynamic methods have already been applied.
-       * @type {{}}
-       * @private
-       */
-      this._appliedMethods = {};
 
       this._apply();
       this._processCommentTags();
@@ -103,12 +106,13 @@ export default class AbstractDoc
       // Save doc name in the AST node such that it is accessible for MemberDoc / MethodDoc `_$memberof`.
       this._node._tjsdocDocName = this._value.name;
 
+      // Ensures that the AST node is added last in doc object data.
       this._value.node = this._node;
    }
 
    /**
     * apply doc comment.
-    * @protected
+    * @private
     */
    _apply()
    {
@@ -120,12 +124,32 @@ export default class AbstractDoc
 
       for (const methodName of dynamicMethods)
       {
-         if (typeof this._appliedMethods[methodName] === 'undefined')
+         if (!this._appliedMethods[methodName])
          {
             this[methodName]();
             this._appliedMethods[methodName] = true;
          }
       }
+   }
+
+   /**
+    * Deletes all non-function keys in this object including all collated data. The `_value` object is however
+    * retained and returned, but deleted along with all other local non-function keys of `this` to ensure that it goes
+    * out of scope. This for instance prevents a copy of `_value` when loading into a `DocDB` instance.
+    *
+    * @returns {{}}
+    */
+   destroy()
+   {
+      const value = this._value;
+
+      // Delete all local keys that are not a function.
+      for (const key of Object.keys(this))
+      {
+         if (typeof this[key] !== 'function') { delete this[key]; }
+      }
+
+      return value;
    }
 
    /**
@@ -138,7 +162,7 @@ export default class AbstractDoc
     */
    _ensureApplied(methodName)
    {
-      if (typeof this._appliedMethods[methodName] === 'undefined')
+      if (!this._appliedMethods[methodName])
       {
          if (this[methodName] instanceof Function)
          {
@@ -251,26 +275,6 @@ export default class AbstractDoc
       const tag = this._find(names);
 
       return tag ? tag.tagValue : null;
-   }
-
-   /**
-    * Deletes all non-function keys in this object including all collated data. The `_value` object is however
-    * retained and returned, but deleted along with all other local non-function keys of `this` to ensure that it goes
-    * out of scope. This prevents a copy of `_value` when loading into a `DocDB` instance.
-    *
-    * @returns {{}}
-    */
-   destroy()
-   {
-      const value = this._value;
-
-      // Delete all local keys that are not a function.
-      for (const key of Object.keys(this))
-      {
-         if (typeof this[key] !== 'function') { delete this[key]; }
-      }
-
-      return value;
    }
 
    /** @type {DocObject[]} */
