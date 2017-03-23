@@ -20,38 +20,50 @@ export default class CoreDocResolver
    }
 
    /**
-    * Resolve various properties.
+    * Stores the target project TJSDocConfig and main DocDB so that eventbus queries are reduced.
+    *
+    * @param {PluginEvent}    ev - An event proxy for the main this._eventbus.
     */
-   resolve()
+   onPreGenerate(ev)
    {
-      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
+      this._config = ev.data.config;
 
+      this._mainDocDB = this._eventbus.triggerSync('tjsdoc:data:docdb:get');
+   }
+
+   /**
+    * Resolve various properties.
+    *
+    * @param {boolean}  [log=true] - If true then logging is output for each resolution stage.
+    */
+   resolve({ log = true } = {})
+   {
       // Must remove common path first as `longname`, `memberof, and `name` are modified.
-      if (config.removeCommonPath)
+      if (this._config.removeCommonPath)
       {
-         this._eventbus.trigger('log:info:raw', 'resolve: removing common path');
+         if (log) { this._eventbus.trigger('log:info:raw', 'resolve: removing common path'); }
          this._resolveCommonPath();
       }
 
-      this._eventbus.trigger('log:info:raw', 'resolve: extends chain');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: extends chain'); }
       this._resolveExtendsChain();
 
-      this._eventbus.trigger('log:info:raw', 'resolve: necessary');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: necessary'); }
       this._resolveNecessary();
 
-      this._eventbus.trigger('log:info:raw', 'resolve: access');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: access'); }
       this._resolveAccess();
 
-      this._eventbus.trigger('log:info:raw', 'resolve: unexported identifier');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: unexported identifier'); }
       this._resolveUnexportIdentifier();
 
-      this._eventbus.trigger('log:info:raw', 'resolve: undocument identifier');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: undocument identifier'); }
       this._resolveUndocumentIdentifier();
 
-      this._eventbus.trigger('log:info:raw', 'resolve: duplication');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: duplication'); }
       this._resolveDuplication();
 
-      this._eventbus.trigger('log:info:raw', 'resolve: ignore');
+      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: ignore'); }
       this._resolveIgnore();
    }
 
@@ -63,12 +75,10 @@ export default class CoreDocResolver
     */
    _resolveAccess()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
+      const access = this._config.access || ['public', 'protected', 'private'];
+      const autoPrivate = this._config.autoPrivate;
 
-      const access = config.access || ['public', 'protected', 'private'];
-      const autoPrivate = config.autoPrivate;
-
-      this._eventbus.triggerSync('tjsdoc:data:docdb:query').update(function()
+      this._mainDocDB.query().update(function()
       {
          if (!this.access)
          {
@@ -93,12 +103,12 @@ export default class CoreDocResolver
     */
    _resolveCommonPath()
    {
-      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: { '!is': 'memory' } },
+      const docs = this._mainDocDB.find({ kind: { '!is': 'memory' } },
        { kind: { '!is': 'external' } });
 
       if (docs.length === 0) { return; }
 
-      let commonPath = this._eventbus.triggerSync('typhonjs:util:file:path:common:mapped', 'longname', ...docs);
+      let commonPath = this._eventbus.triggerSync('typhonjs:util:file:path:common:mapped', 'filePath', ...docs);
 
       if (commonPath === '') { return; }
 
@@ -127,14 +137,13 @@ export default class CoreDocResolver
     */
    _resolveDuplication()
    {
-      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: 'member' });
+      const docs = this._mainDocDB.find({ kind: 'member' });
       const ignoreId = [];
 
       for (const doc of docs)
       {
          // member duplicate with getter/setter/method. when it, remove member. getter/setter/method are high priority.
-         const nonMemberDup = this._eventbus.triggerSync('tjsdoc:data:docdb:find',
-          { longname: doc.longname, kind: { '!is': 'member' } });
+         const nonMemberDup = this._mainDocDB.find({ longname: doc.longname, kind: { '!is': 'member' } });
 
          if (nonMemberDup.length)
          {
@@ -142,7 +151,7 @@ export default class CoreDocResolver
             continue;
          }
 
-         const dup = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { longname: doc.longname, kind: 'member' });
+         const dup = this._mainDocDB.find({ longname: doc.longname, kind: 'member' });
 
          if (dup.length > 1)
          {
@@ -155,7 +164,7 @@ export default class CoreDocResolver
          }
       }
 
-      this._eventbus.triggerSync('tjsdoc:data:docdb:query', { ___id: ignoreId }).update(function()
+      this._mainDocDB.query({ ___id: ignoreId }).update(function()
       {
          this.ignore = true;
 
@@ -219,7 +228,7 @@ export default class CoreDocResolver
 
          do
          {
-            const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', doc.extends[0])[0];
+            const superClassDoc = this._mainDocDB.findByName(doc.extends[0])[0];
 
             if (superClassDoc)
             {
@@ -242,7 +251,7 @@ export default class CoreDocResolver
          if (chains.length)
          {
             // direct subclass
-            let superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', chains[0])[0];
+            let superClassDoc = this._mainDocDB.findByName(chains[0])[0];
 
             if (superClassDoc)
             {
@@ -261,7 +270,7 @@ export default class CoreDocResolver
             // indirect subclass
             for (const superClassLongname of chains.slice(1))
             {
-               superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
+               superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
 
                if (superClassDoc)
                {
@@ -284,7 +293,7 @@ export default class CoreDocResolver
             // indirect implements and mixes
             for (const superClassLongname of chains)
             {
-               superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
+               superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
 
                if (!superClassDoc) { continue; }
 
@@ -309,7 +318,7 @@ export default class CoreDocResolver
          // direct implemented (like direct subclass)
          for (const superClassLongname of selfDoc.implements || [])
          {
-            const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
+            const superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
 
@@ -328,7 +337,7 @@ export default class CoreDocResolver
          // indirect implemented (like indirect subclass)
          for (const superClassLongname of selfDoc._custom_indirect_implements || [])
          {
-            const superClassDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find:by:name', superClassLongname)[0];
+            const superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
 
@@ -348,7 +357,7 @@ export default class CoreDocResolver
          }
       };
 
-      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { kind: 'class' });
+      const docs = this._mainDocDB.find({ kind: 'class' });
 
       for (const doc of docs)
       {
@@ -361,8 +370,7 @@ export default class CoreDocResolver
       {
          if (Array.isArray(doc._custom_dependent_file_paths))
          {
-            const fileDoc = this._eventbus.triggerSync('tjsdoc:data:docdb:find',
-             { kind: 'file', filePath: doc.filePath })[0];
+            const fileDoc = this._mainDocDB.find({ kind: 'file', filePath: doc.filePath })[0];
 
             if (!seen(fileDoc, '_custom_dependent_file_paths')) { fileDoc._custom_dependent_file_paths = []; }
 
@@ -384,17 +392,17 @@ export default class CoreDocResolver
     */
    _resolveIgnore()
    {
-      const docs = this._eventbus.triggerSync('tjsdoc:data:docdb:find', { ignore: true });
+      const docs = this._mainDocDB.find({ ignore: true });
 
       for (const doc of docs)
       {
          const longname = doc.longname.replace(/[$]/g, '\\$');
          const regex = new RegExp(`^${longname}[.~#]`);
 
-         this._eventbus.triggerSync('tjsdoc:data:docdb:query', { longname: { regex } }).remove();
+         this._mainDocDB.query({ longname: { regex } }).remove();
       }
 
-      this._eventbus.triggerSync('tjsdoc:data:docdb:query', { ignore: true }).remove();
+      this._mainDocDB.query({ ignore: true }).remove();
    }
 
    /**
@@ -414,9 +422,9 @@ export default class CoreDocResolver
     */
    _resolveNecessary()
    {
-      const eventbus = this._eventbus;
+      const mainDocDB = this._mainDocDB;
 
-      eventbus.triggerSync('tjsdoc:data:docdb:query', { 'export': false }).update(function()
+      mainDocDB.query({ 'export': false }).update(function()
       {
          const doc = this;
          const childNames = [];
@@ -428,7 +436,7 @@ export default class CoreDocResolver
 
          for (const childName of childNames)
          {
-            const childDoc = eventbus.triggerSync('tjsdoc:data:docdb:find', { longname: childName })[0];
+            const childDoc = mainDocDB.find({ longname: childName })[0];
 
             if (!childDoc) { continue; }
 
@@ -448,11 +456,9 @@ export default class CoreDocResolver
     */
    _resolveUndocumentIdentifier()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
-
-      if (!config.undocumentIdentifier)
+      if (!this._config.undocumentIdentifier)
       {
-         this._eventbus.triggerSync('tjsdoc:data:docdb:query', { undocument: true }).update({ ignore: true });
+         this._mainDocDB.query({ undocument: true }).update({ ignore: true });
       }
    }
 
@@ -463,11 +469,9 @@ export default class CoreDocResolver
     */
    _resolveUnexportIdentifier()
    {
-      const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
-
-      if (!config.unexportIdentifier)
+      if (!this._config.unexportIdentifier)
       {
-         this._eventbus.triggerSync('tjsdoc:data:docdb:query', { 'export': false }).update({ ignore: true });
+         this._mainDocDB.query({ 'export': false }).update({ ignore: true });
       }
    }
 }
