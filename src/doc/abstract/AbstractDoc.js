@@ -816,10 +816,7 @@ const s_GET_DYNAMIC_INVOKE_METHODS = (obj) =>
    {
       Object.getOwnPropertyNames(obj).forEach((prop) =>
       {
-         if (props.indexOf(prop) === -1 && target[prop] instanceof Function && prop.startsWith('_$'))
-         {
-            props.push(prop);
-         }
+         if (!props.includes(prop) && target[prop] instanceof Function && prop.startsWith('_$')) { props.push(prop); }
       });
 
       obj = Object.getPrototypeOf(obj);

@@ -172,7 +172,7 @@ export default class AbstractParamParser
             result.types = [typeText];
          }
 
-         result.spread = typeText.indexOf('...') === 0;
+         result.spread = typeText.startsWith('...');
       }
       else
       {
