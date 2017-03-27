@@ -78,7 +78,14 @@ export default class AbstractClassDoc extends AbstractModuleDoc
 
       if (tag)
       {
-         this._value.interface = ['', 'true', true].includes(tag.tagValue);
+         switch (tag.tagValue)
+         {
+            case '':
+            case 'true':
+            case true:
+               this._value.interface = true;
+               break;
+         }
       }
       else
       {
