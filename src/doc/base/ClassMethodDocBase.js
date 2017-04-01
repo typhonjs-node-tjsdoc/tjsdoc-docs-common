@@ -1,4 +1,4 @@
-import AbstractDoc   from './AbstractDoc.js';
+import DocBase from './DocBase.js';
 
 /**
  * Provides the common base for documenting class methods.
@@ -23,6 +23,6 @@ import AbstractDoc   from './AbstractDoc.js';
  *
  * _$type()
  */
-export default class AbstractMethodDoc extends AbstractDoc
+export default class ClassMethodDocBase extends DocBase
 {
 }

@@ -1,11 +1,11 @@
-import fs            from 'fs';
+import fs      from 'fs';
 
-import AbstractDoc   from './abstract/AbstractDoc.js';
+import DocBase from './base/DocBase.js';
 
 /**
  * Doc Class from source file.
  */
-export default class FileDoc extends AbstractDoc
+export default class FileDoc extends DocBase
 {
    /**
     * Create doc data statically held. File docs are the module, so pass `null` as the module ID to AbstractDoc.

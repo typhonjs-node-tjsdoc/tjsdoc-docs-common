@@ -1,6 +1,6 @@
-import fs                  from 'fs';
+import fs            from 'fs';
 
-import AbstractModuleDoc   from './AbstractModuleDoc.js';
+import ModuleDocBase from './ModuleDocBase.js';
 
 /**
  * Provides the common base for documenting classes.
@@ -15,7 +15,7 @@ import AbstractModuleDoc   from './AbstractModuleDoc.js';
  *
  * _$extends()
  */
-export default class AbstractClassDoc extends AbstractModuleDoc
+export default class ModuleClassDocBase extends ModuleDocBase
 {
    /**
     * read selection text in file.

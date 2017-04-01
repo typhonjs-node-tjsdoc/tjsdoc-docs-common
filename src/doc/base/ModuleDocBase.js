@@ -1,9 +1,9 @@
-import AbstractDoc   from './AbstractDoc.js';
+import DocBase from './DocBase.js';
 
 /**
  * Contains methods required for doc types that need module import / export support.
  */
-export default class AbstractModuleDoc extends AbstractDoc
+export default class ModuleDocBase extends DocBase
 {
    /**
     * decide `export`.

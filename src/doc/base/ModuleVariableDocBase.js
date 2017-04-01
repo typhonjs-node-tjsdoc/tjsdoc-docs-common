@@ -1,4 +1,4 @@
-import AbstractModuleDoc   from './AbstractModuleDoc.js';
+import ModuleDocBase from './ModuleDocBase.js';
 
 /**
  * Provides the common base for documenting variable declarations.
@@ -7,7 +7,7 @@ import AbstractModuleDoc   from './AbstractModuleDoc.js';
  *
  * _$name()
  */
-export default class AbstractVariableDoc extends AbstractModuleDoc
+export default class ModuleVariableDocBase extends ModuleDocBase
 {
    /** specify ``variable`` to kind. */
    static _$kind()

@@ -1,19 +1,19 @@
-import AbstractDoc   from './AbstractDoc.js';
+import DocBase from './DocBase.js';
 
 /**
- * Provides the common base for documenting member expressions.
+ * Provides the common base for documenting class properties.
  *
  * Child classes must implement the following methods:
  *
- * _$memberof()
- *
  * _$name()
+ *
+ * _$memberof()
  *
  * _$static()
  *
  * _$type()
  */
-export default class AbstractMemberDoc extends AbstractDoc
+export default class ClassPropertyDocBase extends DocBase
 {
    /** specify ``member`` to kind. */
    static _$kind()

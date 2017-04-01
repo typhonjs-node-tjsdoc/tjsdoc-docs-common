@@ -2,15 +2,15 @@ import fs   from 'fs';
 import path from 'path';
 
 /**
- * Abstract Doc Class.
+ * The base doc.
  *
- * The following tags / annotations are supported by AbstractDoc and children implementations:
+ * The following tags / annotations are supported by DocBase and children implementations:
  *
  * `@abstract`, `@access`, `@deprecated`, `@desc`, `@emits`, `@example`, `@experimental`, `@ignore`, `@listens`,
  * `@param`, `@override`, `@private`, `@property`, `@protected`, `@public`, `@return`, `@returns`, `@see`, `@since`,
  * `@throws`, `@todo`, `@type`, `@version`
  */
-export default class AbstractDoc
+export default class DocBase
 {
    /**
     * Creates doc data statically held.
@@ -29,7 +29,7 @@ export default class AbstractDoc
     *
     * @param {EventProxy}        eventbus - An event proxy for the main eventbus.
     *
-    * @returns {AbstractDoc}
+    * @returns {DocBase}
     */
    static create(docID, moduleID, ast, node, pathResolver, commentTags = [], eventbus)
    {
@@ -346,7 +346,7 @@ export default class AbstractDoc
    }
 
    /**
-    * The following methods provide the @xxx tags / annotations supported in AbstractDoc. Adding methods makes it easy
+    * The following methods provide the @xxx tags / annotations supported in DocBase. Adding methods makes it easy
     * to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 

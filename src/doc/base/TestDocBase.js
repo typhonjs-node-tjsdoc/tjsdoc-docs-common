@@ -1,4 +1,4 @@
-import AbstractDoc   from './AbstractDoc.js';
+import DocBase from './DocBase.js';
 
 /**
  * Provides the common base for documenting tests.
@@ -15,7 +15,7 @@ import AbstractDoc   from './AbstractDoc.js';
  *
  * _$memberof()
  */
-export default class AbstractTestDoc extends AbstractDoc
+export default class TestDocBase extends DocBase
 {
 
    /**

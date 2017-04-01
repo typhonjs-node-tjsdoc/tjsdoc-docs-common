@@ -1,4 +1,4 @@
-import AbstractDoc   from './abstract/AbstractDoc.js';
+import DocBase from './base/DocBase.js';
 
 /**
  * Doc Class from virtual comment node of external.
@@ -7,7 +7,7 @@ import AbstractDoc   from './abstract/AbstractDoc.js';
  *
  * `@external`
  */
-export default class ExternalDoc extends AbstractDoc
+export default class ExternalDoc extends DocBase
 {
    /**
     * The following methods provide the @xxx tags / annotations supported in ExternalDoc. Adding methods makes it easy

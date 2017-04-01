@@ -1,4 +1,4 @@
-import AbstractDoc   from './AbstractDoc.js';
+import DocBase from './DocBase.js';
 
 /**
  * Provides the common base for virtual comment node `@typedef`.
@@ -11,7 +11,7 @@ import AbstractDoc   from './AbstractDoc.js';
  *
  * _$memberof()
  */
-export default class AbstractTypedefDoc extends AbstractDoc
+export default class VirtualTypedefDocBase extends DocBase
 {
    /**
     * The following methods provide the @xxx tags / annotations supported in AbstractTypedefDoc. Adding methods makes it

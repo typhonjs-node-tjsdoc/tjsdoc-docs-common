@@ -1,4 +1,4 @@
-import AbstractModuleDoc   from './AbstractModuleDoc.js';
+import ModuleDocBase   from './ModuleDocBase.js';
 
 /**
  * Provides the common base for documenting functions (module scope).
@@ -15,7 +15,7 @@ import AbstractModuleDoc   from './AbstractModuleDoc.js';
  *
  * _$return()
  */
-export default class AbstractFunctionDoc extends AbstractModuleDoc
+export default class ModuleFunctionDocBase extends ModuleDocBase
 {
    /** specify ``function`` to kind. */
    static _$kind()
