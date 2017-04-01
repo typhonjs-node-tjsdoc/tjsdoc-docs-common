@@ -1,5 +1,5 @@
 {
-  "presets": ["latest", "stage-2"],
+  "presets": ["env", "stage-2"],
 
   "plugins":
   [
@@ -10,7 +10,8 @@
       {
       }
     }],
-    "transform-runtime"
+    "transform-runtime",
+    "transform-export-extensions"
   ],
 
   "env":
@@ -27,7 +28,8 @@
           {
           }
         }],
-        "transform-runtime"
+        "transform-runtime",
+        "transform-export-extensions"
       ]
     }
   }
