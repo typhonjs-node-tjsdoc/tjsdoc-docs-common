@@ -1,5 +1,7 @@
 import CoreDocResolver from './resolver/CoreDocResolver.js';
 
+import * as CommonDocs from './doc/';
+
 /**
  * Adds all common doc plugins.
  *
@@ -19,4 +21,7 @@ export function onPluginLoad(ev)
    });
 
    eventbus.trigger('plugins:add', { name: 'tjsdoc-core-doc-resolver', instance: new CoreDocResolver() });
+
+   // Add event binding to retrieve all common doc object generator classes.
+   eventbus.on('tjsdoc:data:docs:common:get', () => CommonDocs);
 }
