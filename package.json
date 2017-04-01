@@ -27,7 +27,7 @@
     "tjsdoc-test-utils": "git+https://git@github.com/typhonjs-node-tjsdoc/tjsdoc-test-utils.git",
     "tjsdoc-tests-ecmascript": "git+https://git@github.com/typhonjs-node-tjsdoc/tjsdoc-tests-ecmascript.git",
     "typhonjs-config-eslint": "^0.5.0",
-    "typhonjs-npm-build-test": "^0.6.0"
+    "typhonjs-npm-build-test": "^0.7.0"
   },
   "keywords": [
     "typhonjs",
