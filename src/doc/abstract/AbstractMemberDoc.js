@@ -16,7 +16,7 @@ import AbstractDoc   from './AbstractDoc.js';
 export default class AbstractMemberDoc extends AbstractDoc
 {
    /** specify ``member`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'member';
    }

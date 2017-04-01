@@ -8,7 +8,7 @@ import AbstractDoc   from './abstract/AbstractDoc.js';
 export default class FileDoc extends AbstractDoc
 {
    /**
-    * Create instance. File docs are the module, so pass `null` as the module ID to AbstractDoc.
+    * Create doc data statically held. File docs are the module, so pass `null` as the module ID to AbstractDoc.
     *
     * @param {number}         docID - The docID for this doc.
     *
@@ -21,14 +21,16 @@ export default class FileDoc extends AbstractDoc
     * @param {Tag[]}          commentTags - this is tags that self node has.
     *
     * @param {EventProxy}     eventbus - An event proxy for the main eventbus.
+    *
+    * @returns {FileDoc}
     */
-   constructor(docID, ast, node, pathResolver, commentTags = [], eventbus)
+   static create(docID, ast, node, pathResolver, commentTags = [], eventbus)
    {
-      super(docID, null, ast, node, pathResolver, commentTags, eventbus);
+      return super.create(docID, null, ast, node, pathResolver, commentTags, eventbus);
    }
 
    /** specify file content to value.content */
-   _$content()
+   static _$content()
    {
       const filePath = this._pathResolver.absolutePath;
 
@@ -36,19 +38,19 @@ export default class FileDoc extends AbstractDoc
    }
 
    /** specify ``file`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'file';
    }
 
    /** specify name to longname */
-   _$longname()
+   static _$longname()
    {
       this._value.longname = this._pathResolver.filePath;
    }
 
    /** take out self name from file path */
-   _$name()
+   static _$name()
    {
       this._value.name = this._pathResolver.filePath;
    }

@@ -27,7 +27,7 @@ export default class AbstractClassDoc extends AbstractModuleDoc
     * @returns {string} selection text
     * @private
     */
-   _readSelection(filePath, line, startColumn, endColumn)
+   static _readSelection(filePath, line, startColumn, endColumn)
    {
       const code = fs.readFileSync(filePath).toString();
       const lines = code.split('\n');
@@ -47,14 +47,14 @@ export default class AbstractClassDoc extends AbstractModuleDoc
     * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 
-   /** @ignore */ _tag_extend() {}
-   /** @ignore */ _tag_extends() {}
-   /** @ignore */ _tag_implement() {}
-   /** @ignore */ _tag_implements() {}
-   /** @ignore */ _tag_interface() {}
+   /** @ignore */ static _tag_extend() {}
+   /** @ignore */ static _tag_extends() {}
+   /** @ignore */ static _tag_implement() {}
+   /** @ignore */ static _tag_implements() {}
+   /** @ignore */ static _tag_interface() {}
 
    /** for @implements */
-   _$implements()
+   static _$implements()
    {
       const values = this._findAllTagValues(['@implements']);
 
@@ -72,7 +72,7 @@ export default class AbstractClassDoc extends AbstractModuleDoc
    }
 
    /** for @interface */
-   _$interface()
+   static _$interface()
    {
       const tag = this._find(['@interface']);
 
@@ -94,13 +94,13 @@ export default class AbstractClassDoc extends AbstractModuleDoc
    }
 
    /** specify ``class`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'class';
    }
 
    /** take out self memberof from file path. */
-   _$memberof()
+   static _$memberof()
    {
       this._value.memberof = this._pathResolver.filePath;
    }

@@ -12,7 +12,7 @@ export default class AbstractAssignmentDoc extends AbstractModuleDoc
    /**
     * specify ``variable`` to kind.
     */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'variable';
    }
@@ -20,7 +20,7 @@ export default class AbstractAssignmentDoc extends AbstractModuleDoc
    /**
     * take out self memberof from file path.
     */
-   _$memberof()
+   static _$memberof()
    {
       this._value.memberof = this._pathResolver.filePath;
    }

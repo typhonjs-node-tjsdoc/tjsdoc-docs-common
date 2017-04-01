@@ -23,18 +23,18 @@ export default class AbstractTestDoc extends AbstractDoc
     * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 
-   /** @ignore */ _tag_test() {}
-   /** @ignore */ _tag_testTarget() {}
+   /** @ignore */ static _tag_test() {}
+   /** @ignore */ static _tag_testTarget() {}
 
    /** set name and testId from special tjsdoc property. */
-   _$name()
+   static _$name()
    {
       this._value.name = this._node._tjsdocTestName;
       this._value.testId = this._node._tjsdocTestId;
    }
 
    /** for @testTarget. */
-   _$testTarget()
+   static _$testTarget()
    {
       const values = this._findAllTagValues(['@test', '@testTarget']);
 

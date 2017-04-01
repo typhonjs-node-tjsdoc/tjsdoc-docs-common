@@ -6,7 +6,7 @@ import AbstractDoc from './abstract/AbstractDoc.js';
 export default class MemoryDoc extends AbstractDoc
 {
    /**
-    * Create instance. Memory docs are the module, so pass `null` as the module ID to AbstractDoc.
+    * Create doc data statically held. Memory docs are the module, so pass `null` as the module ID to AbstractDoc.
     *
     * @param {number}         docID - The docID for this doc.
     *
@@ -21,29 +21,33 @@ export default class MemoryDoc extends AbstractDoc
     * @param {EventProxy}     eventbus - An event proxy for the main eventbus.
     *
     * @param {String}         code - this is the in memory code that defines this doc.
+    *
+    * @returns {FileDoc}
     */
-   constructor(docID, ast, node, pathResolver, commentTags = [], eventbus, code)
+   static create(docID, ast, node, pathResolver, commentTags = [], eventbus, code)
    {
-      super(docID, null, ast, node, pathResolver, commentTags, eventbus);
+      super.create(docID, null, ast, node, pathResolver, commentTags, eventbus);
 
       // Must set content directly as all value properties are resolved in AbstractDoc constructor.
       this._value.content = code;
+
+      return this;
    }
 
    /** specify ``memory`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'memory';
    }
 
    /** specify name to longname */
-   _$longname()
+   static _$longname()
    {
       this._value.longname = 'In memory code';
    }
 
    /** take out self name from file path */
-   _$name()
+   static _$name()
    {
       this._value.name = 'In memory code';
    }

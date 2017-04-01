@@ -8,7 +8,7 @@ export default class AbstractModuleDoc extends AbstractDoc
    /**
     * decide `export`.
     */
-   _$export()
+   static _$export()
    {
       this._value.export = this._eventbus.triggerSync('tjsdoc:system:ast:parent:export:find', this._node);
    }
@@ -16,7 +16,7 @@ export default class AbstractModuleDoc extends AbstractDoc
    /**
     * decide `importPath`.
     */
-   _$importPath()
+   static _$importPath()
    {
       this._value.importPath = this._pathResolver.importPath;
    }
@@ -24,7 +24,7 @@ export default class AbstractModuleDoc extends AbstractDoc
    /**
     * decide `importStyle`.
     */
-   _$importStyle()
+   static _$importStyle()
    {
       if (this._node.__PseudoExport__)
       {

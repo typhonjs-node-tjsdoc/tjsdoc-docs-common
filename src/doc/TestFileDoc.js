@@ -6,7 +6,7 @@ import FileDoc from './FileDoc.js';
 export default class TestFileDoc extends FileDoc
 {
    /** set ``testFile`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'testFile';
    }

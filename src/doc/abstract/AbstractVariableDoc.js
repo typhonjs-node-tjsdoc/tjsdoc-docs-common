@@ -10,13 +10,13 @@ import AbstractModuleDoc   from './AbstractModuleDoc.js';
 export default class AbstractVariableDoc extends AbstractModuleDoc
 {
    /** specify ``variable`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'variable';
    }
 
    /** set memberof by using file path. */
-   _$memberof()
+   static _$memberof()
    {
       this._value.memberof = this._pathResolver.filePath;
    }

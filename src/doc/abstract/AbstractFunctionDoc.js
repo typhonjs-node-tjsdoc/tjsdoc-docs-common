@@ -18,13 +18,13 @@ import AbstractModuleDoc   from './AbstractModuleDoc.js';
 export default class AbstractFunctionDoc extends AbstractModuleDoc
 {
    /** specify ``function`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'function';
    }
 
    /** take out self name from file path */
-   _$memberof()
+   static _$memberof()
    {
       this._value.memberof = this._pathResolver.filePath;
    }

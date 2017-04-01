@@ -18,16 +18,16 @@ export default class AbstractTypedefDoc extends AbstractDoc
     * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 
-   /** @ignore */ _tag_typedef() {}
+   /** @ignore */ static _tag_typedef() {}
 
    /** specify ``typedef`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'typedef';
    }
 
    /** set name by using tag. */
-   _$name()
+   static _$name()
    {
       const tags = this._findAll(['@typedef']);
 
@@ -49,7 +49,7 @@ export default class AbstractTypedefDoc extends AbstractDoc
    }
 
    /** for @typedef */
-   _$typedef()
+   static _$typedef()
    {
       const value = this._findTagValue(['@typedef']);
 

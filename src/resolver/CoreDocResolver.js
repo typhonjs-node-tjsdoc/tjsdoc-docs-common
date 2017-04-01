@@ -35,9 +35,15 @@ export default class CoreDocResolver
     * Resolve various properties.
     *
     * @param {boolean}  [log=true] - If true then logging is output for each resolution stage.
+    *
+    * @param {boolean}  [reset=false] - If true then all existing custom resolver data is removed prior to resolution.
     */
-   resolve({ log = true } = {})
+   resolve({ log = true, query = void 0, reset = false } = {})
    {
+      // TODO: consider if resetting is valid
+      // Potentially reset resolver data.
+      // if (reset) { this._eventbus.triggerSync('tjsdoc:data:docdb:query').each((doc => delete doc._resolver); }
+
       // Must remove common path first as `longname`, `memberof, and `name` are modified.
       if (this._config.removeCommonPath)
       {
@@ -376,7 +382,7 @@ export default class CoreDocResolver
 
             for (const filePath of doc._custom_dependent_file_paths)
             {
-               if (fileDoc._custom_dependent_file_paths.indexOf(filePath) === -1)
+               if (!fileDoc._custom_dependent_file_paths.includes(filePath))
                {
                   fileDoc._custom_dependent_file_paths.push(filePath);
                }

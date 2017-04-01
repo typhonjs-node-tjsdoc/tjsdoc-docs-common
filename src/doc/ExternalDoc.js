@@ -14,16 +14,16 @@ export default class ExternalDoc extends AbstractDoc
     * to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 
-   /** @ignore */ _tag_external() {}
+   /** @ignore */ static _tag_external() {}
 
    /** specify ``external`` to kind. */
-   _$kind()
+   static _$kind()
    {
       this._value.kind = 'external';
    }
 
    /** specify name to longname */
-   _$longname()
+   static _$longname()
    {
       super._$longname();
 
@@ -35,13 +35,13 @@ export default class ExternalDoc extends AbstractDoc
    }
 
    /** take out self memberof from file path. */
-   _$memberof()
+   static _$memberof()
    {
       this._value.memberof = this._pathResolver.filePath;
    }
 
    /** take out self name from tag */
-   _$name()
+   static _$name()
    {
       const value = this._findTagValue(['@external']);
 

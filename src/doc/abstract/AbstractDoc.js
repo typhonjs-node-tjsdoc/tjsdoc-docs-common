@@ -13,7 +13,7 @@ import path from 'path';
 export default class AbstractDoc
 {
    /**
-    * create instance.
+    * Creates doc data statically held.
     *
     * @param {number}            docID - The docID for this doc.
     *
@@ -28,8 +28,10 @@ export default class AbstractDoc
     * @param {Tag[]}             commentTags - The comment tags associated with this doc object.
     *
     * @param {EventProxy}        eventbus - An event proxy for the main eventbus.
+    *
+    * @returns {AbstractDoc}
     */
-   constructor(docID, moduleID, ast, node, pathResolver, commentTags = [], eventbus)
+   static create(docID, moduleID, ast, node, pathResolver, commentTags = [], eventbus)
    {
       /**
        * The AST that contains this doc.
@@ -108,13 +110,15 @@ export default class AbstractDoc
 
       // Ensures that the AST node is added last in doc object data.
       this._value.node = this._node;
+
+      return this;
    }
 
    /**
     * apply doc comment.
     * @private
     */
-   _apply()
+   static _apply()
    {
       // Invoke all value parsing functions functions starting with `_$`.
       const dynamicMethods = s_GET_DYNAMIC_INVOKE_METHODS(this);
@@ -139,7 +143,7 @@ export default class AbstractDoc
     *
     * @returns {{}}
     */
-   destroy()
+   static destroy()
    {
       const value = this._value;
 
@@ -160,7 +164,7 @@ export default class AbstractDoc
     *
     * @private
     */
-   _ensureApplied(methodName)
+   static _ensureApplied(methodName)
    {
       if (!this._appliedMethods[methodName])
       {
@@ -188,7 +192,7 @@ export default class AbstractDoc
     * @returns {Tag|null} found tag.
     * @protected
     */
-   _find(names)
+   static _find(names)
    {
       const results = this._findAll(names);
 
@@ -201,7 +205,7 @@ export default class AbstractDoc
     * @returns {Tag[]|null} found tags.
     * @private
     */
-   _findAll(names)
+   static _findAll(names)
    {
       const results = [];
 
@@ -219,7 +223,7 @@ export default class AbstractDoc
     * @returns {*[]|null} found values.
     * @private
     */
-   _findAllTagValues(names)
+   static _findAllTagValues(names)
    {
       const tags = this._findAll(names);
 
@@ -241,7 +245,7 @@ export default class AbstractDoc
     * @returns {string} found class long name.
     * @private
     */
-   _findClassLongname(className)
+   static _findClassLongname(className)
    {
       // find in same file.
       for (const node of this._ast.program.body)
@@ -278,7 +282,7 @@ export default class AbstractDoc
     * @returns {*|null} found value.
     * @private
     */
-   _findTagValue(names)
+   static _findTagValue(names)
    {
       const tag = this._find(names);
 
@@ -286,7 +290,7 @@ export default class AbstractDoc
    }
 
    /** @type {DocObject[]} */
-   get value()
+   static get value()
    {
       return this._value;
    }
@@ -298,7 +302,7 @@ export default class AbstractDoc
     * @returns {string} resolved name.
     * @private
     */
-   _resolveLongname(name)
+   static _resolveLongname(name)
    {
       const importPath = this._eventbus.triggerSync('tjsdoc:system:ast:path:import:declaration:find', this._ast, name);
 
@@ -346,34 +350,34 @@ export default class AbstractDoc
     * to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 
-   /** @ignore */ _tag_abstract() {}
-   /** @ignore */ _tag_access() {}
-   /** @ignore */ _tag_deprecated() {}
-   /** @ignore */ _tag_desc() {}
-   /** @ignore */ _tag_emits() {}
-   /** @ignore */ _tag_example() {}
-   /** @ignore */ _tag_experimental() {}
-   /** @ignore */ _tag_ignore() {}
-   /** @ignore */ _tag_listens() {}
-   /** @ignore */ _tag_param() {}
-   /** @ignore */ _tag_override() {}
-   /** @ignore */ _tag_private() {}
-   /** @ignore */ _tag_property() {}
-   /** @ignore */ _tag_protected() {}
-   /** @ignore */ _tag_public() {}
-   /** @ignore */ _tag_return() {}
-   /** @ignore */ _tag_returns() {}
-   /** @ignore */ _tag_see() {}
-   /** @ignore */ _tag_since() {}
-   /** @ignore */ _tag_throws() {}
-   /** @ignore */ _tag_todo() {}
-   /** @ignore */ _tag_type() {}
-   /** @ignore */ _tag_version() {}
+   /** @ignore */ static _tag_abstract() {}
+   /** @ignore */ static _tag_access() {}
+   /** @ignore */ static _tag_deprecated() {}
+   /** @ignore */ static _tag_desc() {}
+   /** @ignore */ static _tag_emits() {}
+   /** @ignore */ static _tag_example() {}
+   /** @ignore */ static _tag_experimental() {}
+   /** @ignore */ static _tag_ignore() {}
+   /** @ignore */ static _tag_listens() {}
+   /** @ignore */ static _tag_param() {}
+   /** @ignore */ static _tag_override() {}
+   /** @ignore */ static _tag_private() {}
+   /** @ignore */ static _tag_property() {}
+   /** @ignore */ static _tag_protected() {}
+   /** @ignore */ static _tag_public() {}
+   /** @ignore */ static _tag_return() {}
+   /** @ignore */ static _tag_returns() {}
+   /** @ignore */ static _tag_see() {}
+   /** @ignore */ static _tag_since() {}
+   /** @ignore */ static _tag_throws() {}
+   /** @ignore */ static _tag_todo() {}
+   /** @ignore */ static _tag_type() {}
+   /** @ignore */ static _tag_version() {}
 
    /**
     * decide `abstract`.
     */
-   _$abstract()
+   static _$abstract()
    {
       const tag = this._find(['@abstract']);
 
@@ -387,7 +391,7 @@ export default class AbstractDoc
     * decide `access`.
     * process also @public, @private and @protected.
     */
-   _$access()
+   static _$access()
    {
       const tag = this._find(['@access', '@public', '@private', '@protected']);
       if (tag)
@@ -427,7 +431,7 @@ export default class AbstractDoc
    /**
     * decide `decorator`.
     */
-   _$decorator()
+   static _$decorator()
    {
       this._value.decorators = this._eventbus.triggerSync('tjsdoc:system:ast:decorators:find', this._node);
    }
@@ -435,7 +439,7 @@ export default class AbstractDoc
    /**
     * decide `deprecated`.
     */
-   _$deprecated()
+   static _$deprecated()
    {
       const tag = this._find(['@deprecated']);
 
@@ -455,7 +459,7 @@ export default class AbstractDoc
    /**
     * decide `description`.
     */
-   _$desc()
+   static _$desc()
    {
       this._value.description = this._findTagValue(['@desc']);
    }
@@ -463,7 +467,7 @@ export default class AbstractDoc
    /**
     * decide `emits`.
     */
-   _$emits()
+   static _$emits()
    {
       const values = this._findAllTagValues(['@emits']);
 
@@ -483,7 +487,7 @@ export default class AbstractDoc
    /**
     * decide `examples`.
     */
-   _$example()
+   static _$example()
    {
       const tags = this._findAll(['@example']);
 
@@ -501,7 +505,7 @@ export default class AbstractDoc
    /**
     * decide `experimental`.
     */
-   _$experimental()
+   static _$experimental()
    {
       const tag = this._find(['@experimental']);
 
@@ -521,7 +525,7 @@ export default class AbstractDoc
    /**
     * decide `ignore`.
     */
-   _$ignore()
+   static _$ignore()
    {
       const tag = this._find(['@ignore']);
 
@@ -534,7 +538,7 @@ export default class AbstractDoc
    /**
     * decide `longname`.
     */
-   _$longname()
+   static _$longname()
    {
       this._ensureApplied('_$memberof');
       this._ensureApplied('_$name');
@@ -557,7 +561,7 @@ export default class AbstractDoc
    /**
     * decide `lineNumber`.
     */
-   _$lineNumber()
+   static _$lineNumber()
    {
       this._value.lineNumber = this._eventbus.triggerSync('tjsdoc:system:ast:line:number:start:find', this._node);
    }
@@ -565,7 +569,7 @@ export default class AbstractDoc
    /**
     * decide `listens`.
     */
-   _$listens()
+   static _$listens()
    {
       const values = this._findAllTagValues(['@listens']);
 
@@ -585,7 +589,7 @@ export default class AbstractDoc
    /**
     * decide `override`.
     */
-   _$override()
+   static _$override()
    {
       const tag = this._find(['@override']);
 
@@ -598,7 +602,7 @@ export default class AbstractDoc
    /**
     * decide `param`.
     */
-   _$param()
+   static _$param()
    {
       const values = this._findAllTagValues(['@param']);
 
@@ -625,7 +629,7 @@ export default class AbstractDoc
    /**
     * decide `unknown`.
     */
-   _processCommentTags()
+   static _processCommentTags()
    {
       for (const tag of this._commentTags)
       {
@@ -651,7 +655,7 @@ export default class AbstractDoc
    /**
     * decide `property`.
     */
-   _$property()
+   static _$property()
    {
       const values = this._findAllTagValues(['@property']);
 
@@ -668,7 +672,7 @@ export default class AbstractDoc
    /**
     * decide `pseudoExport`.
     */
-   _$pseudoExport()
+   static _$pseudoExport()
    {
       if (this._node.__PseudoExport__)
       {
@@ -679,7 +683,7 @@ export default class AbstractDoc
    /**
     * decide `return`.
     */
-   _$return()
+   static _$return()
    {
       const value = this._findTagValue(['@return', '@returns']);
 
@@ -692,7 +696,7 @@ export default class AbstractDoc
    /**
     * decide `see`.
     */
-   _$see()
+   static _$see()
    {
       const tags = this._findAll(['@see']);
 
@@ -710,7 +714,7 @@ export default class AbstractDoc
    /**
     * decide `since`.
     */
-   _$since()
+   static _$since()
    {
       const tag = this._find(['@since']);
 
@@ -723,7 +727,7 @@ export default class AbstractDoc
    /**
     * decide `todo`.
     */
-   _$todo()
+   static _$todo()
    {
       const tags = this._findAll(['@todo']);
 
@@ -741,7 +745,7 @@ export default class AbstractDoc
    /**
     * decide `throws`.
     */
-   _$throws()
+   static _$throws()
    {
       const values = this._findAllTagValues(['@throws']);
 
@@ -761,7 +765,7 @@ export default class AbstractDoc
    /**
     * decide `type`.
     */
-   _$type()
+   static _$type()
    {
       const value = this._findTagValue(['@type']);
 
@@ -774,7 +778,7 @@ export default class AbstractDoc
    /**
     * decide `undocument` with internal tag.
     */
-   _$undocument()
+   static _$undocument()
    {
       const tag = this._find(['@_undocument']);
 
@@ -787,7 +791,7 @@ export default class AbstractDoc
    /**
     * decide `version`.
     */
-   _$version()
+   static _$version()
    {
       const tag = this._find(['@version']);
 
@@ -816,7 +820,11 @@ const s_GET_DYNAMIC_INVOKE_METHODS = (obj) =>
    {
       Object.getOwnPropertyNames(obj).forEach((prop) =>
       {
-         if (!props.includes(prop) && target[prop] instanceof Function && prop.startsWith('_$')) { props.push(prop); }
+         if (!props.includes(prop) && prop !== 'arguments' && prop !== 'caller' && target[prop] instanceof Function &&
+          prop.startsWith('_$'))
+         {
+            props.push(prop);
+         }
       });
 
       obj = Object.getPrototypeOf(obj);
