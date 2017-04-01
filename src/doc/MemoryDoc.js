@@ -6,7 +6,7 @@ import DocBase from './base/DocBase.js';
 export default class MemoryDoc extends DocBase
 {
    /**
-    * Create doc data statically held. Memory docs are the module, so pass `null` as the module ID to AbstractDoc.
+    * Create doc data statically held. Memory docs are the module, so pass `null` as the module ID to DocBase.
     *
     * @param {number}         docID - The docID for this doc.
     *
@@ -28,7 +28,7 @@ export default class MemoryDoc extends DocBase
    {
       super.create(docID, null, ast, node, pathResolver, commentTags, eventbus);
 
-      // Must set content directly as all value properties are resolved in AbstractDoc constructor.
+      // Must set content directly as all value properties are resolved in DocBase create.
       this._value.content = code;
 
       return this;

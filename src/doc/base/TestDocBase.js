@@ -3,7 +3,7 @@ import DocBase from './DocBase.js';
 /**
  * Provides the common base for documenting tests.
  *
- * The following tags / annotations are supported by AbstractTestDoc and children implementations:
+ * The following tags / annotations are supported by TestDocBase and children implementations:
  *
  * `@test`, `@testTarget`
  *
@@ -19,7 +19,7 @@ export default class TestDocBase extends DocBase
 {
 
    /**
-    * The following methods provide the @xxx tags / annotations supported in AbstractTestDoc. Adding methods makes it
+    * The following methods provide the @xxx tags / annotations supported in TestDocBase. Adding methods makes it
     * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 

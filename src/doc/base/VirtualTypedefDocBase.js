@@ -3,7 +3,7 @@ import DocBase from './DocBase.js';
 /**
  * Provides the common base for virtual comment node `@typedef`.
  *
- * The following tags / annotations are supported by AbstractTypedefDoc and children implementations:
+ * The following tags / annotations are supported by VirtualTypedefDocBase and children implementations:
  *
  * `@typedef`
  *
@@ -14,8 +14,9 @@ import DocBase from './DocBase.js';
 export default class VirtualTypedefDocBase extends DocBase
 {
    /**
-    * The following methods provide the @xxx tags / annotations supported in AbstractTypedefDoc. Adding methods makes it
-    * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
+    * The following methods provide the @xxx tags / annotations supported in VirtualTypedefDocBase. Adding methods
+    * makes it easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they
+    * support.
     */
 
    /** @ignore */ static _tag_typedef() {}

@@ -5,7 +5,7 @@ import ModuleDocBase from './ModuleDocBase.js';
 /**
  * Provides the common base for documenting classes.
  *
- * The following tags / annotations are supported by AbstractClassDoc and children implementations:
+ * The following tags / annotations are supported by ModuleClassDocBase and children implementations:
  *
  * `@extends`, `@implements`, `@interface`
  *
@@ -43,7 +43,7 @@ export default class ModuleClassDocBase extends ModuleDocBase
    }
 
    /**
-    * The following methods provide the @xxx tags / annotations supported in AbstractClassDoc. Adding methods makes it
+    * The following methods provide the @xxx tags / annotations supported in ModuleClassDocBase. Adding methods makes it
     * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
     */
 
