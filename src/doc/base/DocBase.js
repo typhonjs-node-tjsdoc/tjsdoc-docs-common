@@ -670,17 +670,6 @@ export default class DocBase
    }
 
    /**
-    * decide `pseudoExport`.
-    */
-   static _$pseudoExport()
-   {
-      if (this._node.__PseudoExport__)
-      {
-         this._value.pseudoExport = true;
-      }
-   }
-
-   /**
     * decide `return`.
     */
    static _$return()
