@@ -240,31 +240,27 @@ export default class DocBase
    }
 
    /**
-    * find class in same file, import or external.
+    * Find class in same file, import or external.
+    *
+    * Note: this only works for directly exported nodes and not intermediate exports. Intermediate nodes like
+    * `export default <variable>` or `export default new Class()` need special processing in DocFactory
+    * `_processDefaultExport` & `_processNamedExport`.
+    *
     * @param {string} className - target class name.
+    *
     * @returns {string} found class long name.
     * @private
     */
    static _findClassLongname(className)
    {
-      // find in same file.
-      for (const node of this._ast.program.body)
-      {
-         switch (node.type)
-         {
-            case 'ExportDefaultDeclaration':
-            case 'ExportNamedDeclaration':
-               break;
+      // Find exported class name in file.
+      // Note: this only works for directly exported nodes and not intermediate exports.
+      // Intermediate nodes like `export default <variable>` or `export default new Class()` need special processing
+      // in DocFactory `_processDefaultExport` & `_processNamedExport`.
+      const exportNode = this._eventbus.triggerSync('tjsdoc:system:ast:export:declaration:class:find', this._ast,
+       className);
 
-            default:
-               continue;
-         }
-
-         if (node.declaration && node.declaration.type === 'ClassDeclaration' && node.declaration.id.name === className)
-         {
-            return `${this._pathResolver.filePath}~${className}`;
-         }
-      }
+      if (exportNode) { return `${this._pathResolver.filePath}~${className}`; }
 
       // find in import.
       const importPath = this._eventbus.triggerSync('tjsdoc:system:ast:path:import:declaration:find', this._ast,

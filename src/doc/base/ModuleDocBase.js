@@ -22,17 +22,22 @@ export default class ModuleDocBase extends DocBase
    }
 
    /**
-    * decide `importStyle`.
+    * Decide `importStyle`.
+    *
+    * Note: Any changes here also need to be updated in DocFactory `_processDefaultExport` & `_processNamedExport`.
     */
    static _$importStyle()
    {
+      this._ensureApplied('_$name');
+
+      // TODO REMOVE after DocFactory refactor
       if (this._node.__PseudoExport__)
       {
          this._value.importStyle = null;
          return;
       }
 
-      this._ensureApplied('_$name');
+      // this._ensureApplied('_$name');
 
       this._value.importStyle = this._eventbus.triggerSync('tjsdoc:system:ast:import:style:find', this._node,
        this._value.name);
