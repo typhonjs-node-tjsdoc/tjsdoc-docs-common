@@ -30,7 +30,7 @@ export default class ModuleDocBase extends DocBase
    {
       this._ensureApplied('_$name');
 
-      // TODO REMOVE after DocFactory refactor
+      // TODO REMOVE after final removal of old traversal algorithm from DocFactory.
       if (this._node.__PseudoExport__)
       {
          this._value.importStyle = null;
