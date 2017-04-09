@@ -34,11 +34,13 @@ export default class CoreDocResolver
    /**
     * Resolve various properties.
     *
+    * @param {DocDB} [docDB=this._mainDocDB] - The target DocDB to resolve. Defaults to the main DocDB.
+    *
     * @param {boolean}  [log=true] - If true then logging is output for each resolution stage.
     *
     * @param {boolean}  [reset=false] - If true then all existing custom resolver data is removed prior to resolution.
     */
-   resolve({ log = true, query = void 0, reset = false } = {})
+   resolve({ docDB = this._mainDocDB, log = true, query = void 0, reset = false } = {})
    {
       // TODO: consider if resetting is valid
       // Potentially reset resolver data.
@@ -48,43 +50,45 @@ export default class CoreDocResolver
       if (this._config.removeCommonPath)
       {
          if (log) { this._eventbus.trigger('log:info:raw', 'resolve: removing common path'); }
-         this._resolveCommonPath();
+         this._resolveCommonPath(docDB);
       }
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: extends chain'); }
-      this._resolveExtendsChain();
+      this._resolveExtendsChain(docDB);
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: necessary'); }
-      this._resolveNecessary();
+      this._resolveNecessary(docDB);
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: access'); }
-      this._resolveAccess();
+      this._resolveAccess(docDB);
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: unexported identifier'); }
-      this._resolveUnexportIdentifier();
+      this._resolveUnexportIdentifier(docDB);
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: undocument identifier'); }
-      this._resolveUndocumentIdentifier();
+      this._resolveUndocumentIdentifier(docDB);
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: duplication'); }
-      this._resolveDuplication();
+      this._resolveDuplication(docDB);
 
       if (log) { this._eventbus.trigger('log:info:raw', 'resolve: ignore'); }
-      this._resolveIgnore();
+      this._resolveIgnore(docDB);
    }
 
    /**
     * Resolve access property. If doc does not have access property, the doc is public. but if the name starts with '_',
     * the doc is considered private if TJSDocConfig parameter `autoPrivate` is true.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveAccess()
+   _resolveAccess(docDB)
    {
       const access = this._config.access || ['public', 'protected', 'private'];
       const autoPrivate = this._config.autoPrivate;
 
-      this._mainDocDB.query().update(function()
+      docDB.query().update(function()
       {
          if (!this.access)
          {
@@ -105,11 +109,13 @@ export default class CoreDocResolver
    /**
     * Removes any common path from all docs that are not `memory` or `external`.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveCommonPath()
+   _resolveCommonPath(docDB)
    {
-      const docs = this._mainDocDB.find({ kind: { '!is': 'memory' } },
+      const docs = docDB.find({ kind: { '!is': 'memory' } },
        { kind: { '!is': 'external' } });
 
       if (docs.length === 0) { return; }
@@ -139,17 +145,19 @@ export default class CoreDocResolver
     * Resolve duplicated identifiers. Member docs are possible duplication sources. Other docs are not considered
     * duplicates.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveDuplication()
+   _resolveDuplication(docDB)
    {
-      const docs = this._mainDocDB.find({ kind: 'member' });
+      const docs = docDB.find({ kind: 'member' });
       const ignoreId = [];
 
       for (const doc of docs)
       {
          // member duplicate with getter/setter/method. when it, remove member. getter/setter/method are high priority.
-         const nonMemberDup = this._mainDocDB.find({ longname: doc.longname, kind: { '!is': 'member' } });
+         const nonMemberDup = docDB.find({ longname: doc.longname, kind: { '!is': 'member' } });
 
          if (nonMemberDup.length)
          {
@@ -157,7 +165,7 @@ export default class CoreDocResolver
             continue;
          }
 
-         const dup = this._mainDocDB.find({ longname: doc.longname, kind: 'member' });
+         const dup = docDB.find({ longname: doc.longname, kind: 'member' });
 
          if (dup.length > 1)
          {
@@ -170,7 +178,7 @@ export default class CoreDocResolver
          }
       }
 
-      this._mainDocDB.query({ ___id: ignoreId }).update(function()
+      docDB.query({ ___id: ignoreId }).update(function()
       {
          this.ignore = true;
 
@@ -189,9 +197,11 @@ export default class CoreDocResolver
     * - ``_custom_direct_implemented``: class list that directly implements target doc.
     * - ``_custom_indirect_implemented``: class list that indirectly implements target doc.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveExtendsChain()
+   _resolveExtendsChain(docDB)
    {
       /**
        * Tracks which docs need to initialize `_custom_<X>` lists.
@@ -234,7 +244,7 @@ export default class CoreDocResolver
 
          do
          {
-            const superClassDoc = this._mainDocDB.findByName(doc.extends[0])[0];
+            const superClassDoc = docDB.findByName(doc.extends[0])[0];
 
             if (superClassDoc)
             {
@@ -257,7 +267,7 @@ export default class CoreDocResolver
          if (chains.length)
          {
             // direct subclass
-            let superClassDoc = this._mainDocDB.findByName(chains[0])[0];
+            let superClassDoc = docDB.findByName(chains[0])[0];
 
             if (superClassDoc)
             {
@@ -276,7 +286,7 @@ export default class CoreDocResolver
             // indirect subclass
             for (const superClassLongname of chains.slice(1))
             {
-               superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
+               superClassDoc = docDB.findByName(superClassLongname)[0];
 
                if (superClassDoc)
                {
@@ -299,7 +309,7 @@ export default class CoreDocResolver
             // indirect implements and mixes
             for (const superClassLongname of chains)
             {
-               superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
+               superClassDoc = docDB.findByName(superClassLongname)[0];
 
                if (!superClassDoc) { continue; }
 
@@ -324,7 +334,7 @@ export default class CoreDocResolver
          // direct implemented (like direct subclass)
          for (const superClassLongname of selfDoc.implements || [])
          {
-            const superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
+            const superClassDoc = docDB.findByName(superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
 
@@ -343,7 +353,7 @@ export default class CoreDocResolver
          // indirect implemented (like indirect subclass)
          for (const superClassLongname of selfDoc._custom_indirect_implements || [])
          {
-            const superClassDoc = this._mainDocDB.findByName(superClassLongname)[0];
+            const superClassDoc = docDB.findByName(superClassLongname)[0];
 
             if (!superClassDoc) { continue; }
 
@@ -363,7 +373,7 @@ export default class CoreDocResolver
          }
       };
 
-      const docs = this._mainDocDB.find({ kind: 'class' });
+      const docs = docDB.find({ kind: 'class' });
 
       for (const doc of docs)
       {
@@ -376,7 +386,7 @@ export default class CoreDocResolver
       {
          if (Array.isArray(doc._custom_dependent_file_paths))
          {
-            const fileDoc = this._mainDocDB.find({ kind: 'file', filePath: doc.filePath })[0];
+            const fileDoc = docDB.find({ kind: 'file', filePath: doc.filePath })[0];
 
             if (!seen(fileDoc, '_custom_dependent_file_paths')) { fileDoc._custom_dependent_file_paths = []; }
 
@@ -394,21 +404,23 @@ export default class CoreDocResolver
    /**
     * Resolve ignore property. Remove docs that has ignore property.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveIgnore()
+   _resolveIgnore(docDB)
    {
-      const docs = this._mainDocDB.find({ ignore: true });
+      const docs = docDB.find({ ignore: true });
 
       for (const doc of docs)
       {
          const longname = doc.longname.replace(/[$]/g, '\\$');
          const regex = new RegExp(`^${longname}[.~#]`);
 
-         this._mainDocDB.query({ longname: { regex } }).remove();
+         docDB.query({ longname: { regex } }).remove();
       }
 
-      this._mainDocDB.query({ ignore: true }).remove();
+      docDB.query({ ignore: true }).remove();
    }
 
    /**
@@ -424,13 +436,13 @@ export default class CoreDocResolver
     * ``Foo`` is necessary.
     * So, ``Foo`` must be exported by force.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveNecessary()
+   _resolveNecessary(docDB)
    {
-      const mainDocDB = this._mainDocDB;
-
-      mainDocDB.query({ 'export': false }).update(function()
+      docDB.query({ 'export': false }).update(function()
       {
          const doc = this;
          const childNames = [];
@@ -442,7 +454,7 @@ export default class CoreDocResolver
 
          for (const childName of childNames)
          {
-            const childDoc = mainDocDB.find({ longname: childName })[0];
+            const childDoc = docDB.find({ longname: childName })[0];
 
             if (!childDoc) { continue; }
 
@@ -458,26 +470,30 @@ export default class CoreDocResolver
    /**
     * Resolve undocument identifier doc. The ignore property is added docs that have no documentation tags.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveUndocumentIdentifier()
+   _resolveUndocumentIdentifier(docDB)
    {
       if (!this._config.undocumentIdentifier)
       {
-         this._mainDocDB.query({ undocument: true }).update({ ignore: true });
+         docDB.query({ undocument: true }).update({ ignore: true });
       }
    }
 
    /**
     * Resolve unexport identifier doc. The ignore property is added to non-exported docs.
     *
+    * @param {DocDB} docDB - The target DocDB to resolve.
+    *
     * @private
     */
-   _resolveUnexportIdentifier()
+   _resolveUnexportIdentifier(docDB)
    {
       if (!this._config.unexportIdentifier)
       {
-         this._mainDocDB.query({ 'export': false }).update({ ignore: true });
+         docDB.query({ 'export': false }).update({ ignore: true });
       }
    }
 }
