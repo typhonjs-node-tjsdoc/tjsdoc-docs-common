@@ -275,6 +275,32 @@ export default class DocBase
    }
 
    /**
+    * decide `unknown`.
+    */
+   static _processCommentTags()
+   {
+      for (const tag of this._commentTags)
+      {
+         const methodName = tag.tagName.replace(/^[@]/, '_tag_');
+
+         // If this class, including children implementations, has a matching `_tag_<methodName>` method then the tag
+         // is marked as known and handled by this class otherwise it is marked as an unknown tag.
+         if (typeof this[methodName] === 'function')
+         {
+            if (!this._value.tagsKnown) { this._value.tagsKnown = []; }
+
+            this._value.tagsKnown.push(tag);
+         }
+         else
+         {
+            if (!this._value.tagsUnknown) { this._value.tagsUnknown = []; }
+
+            this._value.tagsUnknown.push(tag);
+         }
+      }
+   }
+
+   /**
     * Deletes all non-function keys in this static doc including all collated data. The `_value` object is however
     * retained and returned, but deleted along with all other local non-function keys of `this` to ensure that it goes
     * out of scope. This for instance prevents a copy of `_value` when loading into a `DocDB` instance.
@@ -622,32 +648,6 @@ export default class DocBase
          }
 
          this._value.params.push(this._eventbus.triggerSync('tjsdoc:system:parser:param:from:value:parse', result));
-      }
-   }
-
-   /**
-    * decide `unknown`.
-    */
-   static _processCommentTags()
-   {
-      for (const tag of this._commentTags)
-      {
-         const methodName = tag.tagName.replace(/^[@]/, '_tag_');
-
-         // If this class, including children implementations, has a matching `_tag_<methodName>` method then the tag
-         // is marked as known and handled by this class otherwise it is marked as an unknown tag.
-         if (typeof this[methodName] === 'function')
-         {
-            if (!this._value.tagsKnown) { this._value.tagsKnown = []; }
-
-            this._value.tagsKnown.push(tag);
-         }
-         else
-         {
-            if (!this._value.tagsUnknown) { this._value.tagsUnknown = []; }
-
-            this._value.tagsUnknown.push(tag);
-         }
       }
    }
 
