@@ -226,7 +226,7 @@ export default class DocBase
     * Find class in same file, import or external.
     *
     * Note: this only works for directly exported nodes and not intermediate exports. Intermediate nodes like
-    * `export default <variable>` or `export default new Class()` need special processing in DocFactory
+    * `export default <variable>` or `export default new Class()` need special processing in DocGenerator
     * `_processDefaultExport` & `_processNamedExport`.
     *
     * @param {string} className - target class name.
@@ -239,7 +239,7 @@ export default class DocBase
       // Find exported class name in file.
       // Note: this only works for directly exported nodes and not intermediate exports.
       // Intermediate nodes like `export default <variable>` or `export default new Class()` need special processing
-      // in DocFactory `_processDefaultExport` & `_processNamedExport`.
+      // in DocGenerator `_processDefaultExport` & `_processNamedExport`.
       const exportNode = this._eventbus.triggerSync('tjsdoc:system:ast:export:declaration:class:find', this._ast,
        className);
 

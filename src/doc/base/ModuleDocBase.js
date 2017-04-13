@@ -24,13 +24,13 @@ export default class ModuleDocBase extends DocBase
    /**
     * Decide `importStyle`.
     *
-    * Note: Any changes here also need to be updated in DocFactory `_processDefaultExport` & `_processNamedExport`.
+    * Note: Any changes here also need to be updated in DocGenerator `_processDefaultExport` & `_processNamedExport`.
     */
    static _$importStyle()
    {
       this._ensureApplied('_$name');
 
-      // TODO REMOVE after final removal of old traversal algorithm from DocFactory.
+      // TODO REMOVE after final removal of old traversal algorithm from DocGenerator.
       if (this._node.__PseudoExport__)
       {
          this._value.importStyle = null;
