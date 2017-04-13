@@ -2,7 +2,7 @@ import fs   from 'fs';
 import path from 'path';
 
 /**
- * The base doc.
+ * The base StaticDoc.
  *
  * The following tags / annotations are supported by DocBase and children implementations:
  *
@@ -111,6 +111,9 @@ export default class DocBase
       // Ensures that the AST node is added last in doc object data.
       this._value.node = this._node;
 
+      // Ensures that the complete AST for the file / module is accessible.
+      this._value.ast = this._ast;
+
       return this;
    }
 
@@ -134,26 +137,6 @@ export default class DocBase
             this._appliedMethods[methodName] = true;
          }
       }
-   }
-
-   /**
-    * Deletes all non-function keys in this object including all collated data. The `_value` object is however
-    * retained and returned, but deleted along with all other local non-function keys of `this` to ensure that it goes
-    * out of scope. This for instance prevents a copy of `_value` when loading into a `DocDB` instance.
-    *
-    * @returns {{}}
-    */
-   static destroy()
-   {
-      const value = this._value;
-
-      // Delete all local keys that are not a function.
-      for (const key of Object.keys(this))
-      {
-         if (typeof this[key] !== 'function') { delete this[key]; }
-      }
-
-      return value;
    }
 
    /**
@@ -289,6 +272,26 @@ export default class DocBase
    static get value()
    {
       return this._value;
+   }
+
+   /**
+    * Deletes all non-function keys in this static doc including all collated data. The `_value` object is however
+    * retained and returned, but deleted along with all other local non-function keys of `this` to ensure that it goes
+    * out of scope. This for instance prevents a copy of `_value` when loading into a `DocDB` instance.
+    *
+    * @returns {{}}
+    */
+   static reset()
+   {
+      const value = this._value;
+
+      // Delete all local keys that are not a function.
+      for (const key of Object.keys(this))
+      {
+         if (typeof this[key] !== 'function') { delete this[key]; }
+      }
+
+      return value;
    }
 
    /**
