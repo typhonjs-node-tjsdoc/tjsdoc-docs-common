@@ -2,8 +2,8 @@
 export * as Base                          from './base/';
 
 // Export common docs
-export { default as FileDoc }             from './FileDoc.js';
-export { default as MemoryDoc }           from './MemoryDoc.js';
-export { default as TestFileDoc }         from './TestFileDoc.js';
+export { default as ModuleFileDoc }       from './ModuleFileDoc.js';
+export { default as ModuleMemoryDoc }     from './ModuleMemoryDoc.js';
+export { default as ModuleTestFileDoc }   from './ModuleTestFileDoc.js';
 export { default as VirtualExternalDoc }  from './VirtualExternalDoc.js';
 

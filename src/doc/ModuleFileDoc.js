@@ -5,7 +5,7 @@ import DocBase from './base/DocBase.js';
 /**
  * Doc Class from source file.
  */
-export default class FileDoc extends DocBase
+export default class ModuleFileDoc extends DocBase
 {
    /**
     * Create doc data statically held. File docs are the module, so pass `null` as the module ID to DocBase.

@@ -7,7 +7,7 @@ import ModuleDocBase from './ModuleDocBase.js';
  *
  * _$name()
  */
-export default class AssignmentDocBase extends ModuleDocBase
+export default class ModuleAssignmentDocBase extends ModuleDocBase
 {
    /**
     * specify ``variable`` to kind.

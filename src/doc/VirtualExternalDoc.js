@@ -7,7 +7,7 @@ import DocBase from './base/DocBase.js';
  *
  * `@external`
  */
-export default class ExternalDoc extends DocBase
+export default class VirtualExternalDoc extends DocBase
 {
    /**
     * The following methods provide the @xxx tags / annotations supported in ExternalDoc. Adding methods makes it easy

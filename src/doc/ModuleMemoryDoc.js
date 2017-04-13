@@ -3,7 +3,7 @@ import DocBase from './base/DocBase.js';
 /**
  * Doc from source code in memory. (Used for dynamically loading virtual external & typedef types).
  */
-export default class MemoryDoc extends DocBase
+export default class ModuleMemoryDoc extends DocBase
 {
    /**
     * Create doc data statically held. Memory docs are the module, so pass `null` as the module ID to DocBase.
