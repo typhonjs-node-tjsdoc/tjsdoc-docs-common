@@ -9,15 +9,14 @@ import DocBase from './DocBase.js';
  *
  * Child classes must implement the following methods:
  *
- * _$desc()
+ * _$category()
  *
- * _$kind()
+ * _$desc()
  *
  * _$memberof()
  */
 export default class TestDocBase extends DocBase
 {
-
    /**
     * The following methods provide the @xxx tags / annotations supported in TestDocBase. Adding methods makes it
     * easy to detect any unknown tags when a method is missing. Child classes may also add the tags that they support.
@@ -25,6 +24,12 @@ export default class TestDocBase extends DocBase
 
    /** @ignore */ static _tag_test() {}
    /** @ignore */ static _tag_testTarget() {}
+
+   /** Set kind to `Test`. */
+   static _$kind()
+   {
+      this._value.kind = 'Test';
+   }
 
    /** set name and testId from special tjsdoc property. */
    static _$name()
