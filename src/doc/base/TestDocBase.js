@@ -9,11 +9,11 @@ import DocBase from './DocBase.js';
  *
  * Child classes must implement the following methods:
  *
- * _$category()
- *
  * _$desc()
  *
  * _$memberof()
+ *
+ * _$qualifier()
  */
 export default class TestDocBase extends DocBase
 {

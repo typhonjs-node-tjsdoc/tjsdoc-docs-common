@@ -7,8 +7,6 @@ import DocBase from './DocBase.js';
  *
  * _$async()
  *
- * _$kind()
- *
  * _$generator()
  *
  * _$memberof()
@@ -16,6 +14,8 @@ import DocBase from './DocBase.js';
  * _$name()
  *
  * _$param()
+ *
+ * _$qualifier()
  *
  * _$return()
  *
@@ -25,4 +25,9 @@ import DocBase from './DocBase.js';
  */
 export default class ClassMethodDocBase extends DocBase
 {
+   /** Set kind to 'ClassMethod'. */
+   static _$kind()
+   {
+      this._value.kind = 'ClassMethod';
+   }
 }

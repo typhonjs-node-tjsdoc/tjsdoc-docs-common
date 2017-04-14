@@ -93,8 +93,9 @@ export default class DocBase
       // If a module / file ID is defined then set it.
       this._value.__esModuleId__ = moduleID;
 
-      // Specially apply kind and name methods now so that it appears at the top of the doc object data.
+      // Specially apply kind, category, and name methods now so that it appears at the top of the doc object data.
       this._ensureApplied('_$kind');
+      this._ensureApplied('_$qualifier');
       this._ensureApplied('_$name');
 
       this._value.filePath = this._pathResolver.filePath;
