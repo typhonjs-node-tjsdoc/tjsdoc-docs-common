@@ -151,13 +151,15 @@ export default class CoreDocResolver
     */
    _resolveDuplication(docDB)
    {
-      const docs = docDB.find({ kind: 'member' });
+      const docs = docDB.find({ kind: ['ClassMember', 'ClassProperty'] });
+
       const ignoreId = [];
 
       for (const doc of docs)
       {
          // member duplicate with getter/setter/method. when it, remove member. getter/setter/method are high priority.
-         const nonMemberDup = docDB.find({ longname: doc.longname, kind: { '!is': 'member' } });
+         const nonMemberDup = docDB.find(
+          { longname: doc.longname, kind: 'ClassMethod', qualifier: ['get', 'method', 'set'] });
 
          if (nonMemberDup.length)
          {
@@ -165,7 +167,7 @@ export default class CoreDocResolver
             continue;
          }
 
-         const dup = docDB.find({ longname: doc.longname, kind: 'member' });
+         const dup = docDB.find({ longname: doc.longname, kind: ['ClassMember', 'ClassProperty'] });
 
          if (dup.length > 1)
          {
