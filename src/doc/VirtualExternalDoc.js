@@ -24,10 +24,10 @@ export default class VirtualExternalDoc extends DocBase
       this._value.category = 'VirtualExternal';
    }
 
-   /** specify ``external`` to kind. */
+   /** specify `VirtualExternal` to kind. */
    static _$kind()
    {
-      this._value.kind = 'external';
+      this._value.kind = 'VirtualExternal';
    }
 
    /** specify name to longname */
