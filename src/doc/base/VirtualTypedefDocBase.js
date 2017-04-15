@@ -29,10 +29,10 @@ export default class VirtualTypedefDocBase extends DocBase
       this._value.category = 'VirtualTypedef';
    }
 
-   /** specify ``typedef`` to kind. */
+   /** specify `VirtualTypedef` to kind. */
    static _$kind()
    {
-      this._value.kind = 'typedef';
+      this._value.kind = 'VirtualTypedef';
    }
 
    /** set name by using tag. */
