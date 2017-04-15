@@ -375,7 +375,7 @@ export default class CoreDocResolver
          }
       };
 
-      const docs = docDB.find({ kind: 'class' });
+      const docs = docDB.find({ kind: 'ModuleClass' });
 
       for (const doc of docs)
       {

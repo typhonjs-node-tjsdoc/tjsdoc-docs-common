@@ -61,6 +61,12 @@ export default class ModuleClassDocBase extends ModuleDocBase
       this._value.category = 'ModuleClass';
    }
 
+   /** specify `ModuleClass` to kind. */
+   static _$kind()
+   {
+      this._value.kind = 'ModuleClass';
+   }
+
    /** for @implements */
    static _$implements()
    {
@@ -99,12 +105,6 @@ export default class ModuleClassDocBase extends ModuleDocBase
       {
          this._value.interface = false;
       }
-   }
-
-   /** specify ``class`` to kind. */
-   static _$kind()
-   {
-      this._value.kind = 'class';
    }
 
    /** take out self memberof from file path. */
