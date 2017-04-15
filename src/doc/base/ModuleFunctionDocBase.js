@@ -25,10 +25,10 @@ export default class ModuleFunctionDocBase extends ModuleDocBase
       this._value.category = 'ModuleFunction';
    }
 
-   /** specify ``function`` to kind. */
+   /** specify `ModuleFunction` to kind. */
    static _$kind()
    {
-      this._value.kind = 'function';
+      this._value.kind = 'ModuleFunction';
    }
 
    /** take out self name from file path */
