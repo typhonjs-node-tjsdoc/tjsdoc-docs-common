@@ -115,8 +115,7 @@ export default class CoreDocResolver
     */
    _resolveCommonPath(docDB)
    {
-      const docs = docDB.find({ kind: { '!is': 'memory' } },
-       { kind: { '!is': 'external' } });
+      const docs = docDB.find({ kind: { '!is': 'ModuleMemory' } }, { kind: { '!is': 'external' } });
 
       if (docs.length === 0) { return; }
 
