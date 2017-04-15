@@ -18,11 +18,11 @@ export default class ModuleAssignmentDocBase extends ModuleDocBase
    }
 
    /**
-    * specify ``variable`` to kind.
+    * specify `ModuleVariable` to kind.
     */
    static _$kind()
    {
-      this._value.kind = 'variable';
+      this._value.kind = 'ModuleAssignment';
    }
 
    /**

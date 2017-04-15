@@ -20,7 +20,7 @@ export default class ModuleVariableDocBase extends ModuleDocBase
    /** specify ``variable`` to kind. */
    static _$kind()
    {
-      this._value.kind = 'variable';
+      this._value.kind = 'ModuleVariable';
    }
 
    /** set memberof by using file path. */
