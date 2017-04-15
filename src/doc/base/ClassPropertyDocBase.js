@@ -15,9 +15,15 @@ import DocBase from './DocBase.js';
  */
 export default class ClassPropertyDocBase extends DocBase
 {
-   /** specify ``member`` to kind. */
+   /** specify `ClassMember` to category. */
+   static _$category()
+   {
+      this._value.category = 'ClassMember';
+   }
+
+   /** specify `ClassProperty` to kind. */
    static _$kind()
    {
-      this._value.kind = 'member';
+      this._value.kind = 'ClassProperty';
    }
 }

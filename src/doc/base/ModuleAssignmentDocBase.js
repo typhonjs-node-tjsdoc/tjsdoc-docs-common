@@ -10,6 +10,14 @@ import ModuleDocBase from './ModuleDocBase.js';
 export default class ModuleAssignmentDocBase extends ModuleDocBase
 {
    /**
+    * specify `ModuleVariable` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'ModuleVariable';
+   }
+
+   /**
     * specify ``variable`` to kind.
     */
    static _$kind()

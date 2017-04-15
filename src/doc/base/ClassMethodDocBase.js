@@ -5,7 +5,11 @@ import DocBase from './DocBase.js';
  *
  * Child classes must implement the following methods:
  *
+ * _$accessor()
+ *
  * _$async()
+ *
+ * _$category()
  *
  * _$generator()
  *

@@ -34,6 +34,14 @@ export default class ModuleMemoryDoc extends DocBase
       return this;
    }
 
+   /**
+    * specify `ModuleMemory` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'ModuleMemory';
+   }
+
    /** specify ``memory`` to kind. */
    static _$kind()
    {

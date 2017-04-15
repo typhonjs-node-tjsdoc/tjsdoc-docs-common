@@ -21,6 +21,14 @@ export default class VirtualTypedefDocBase extends DocBase
 
    /** @ignore */ static _tag_typedef() {}
 
+   /**
+    * specify `VirtualTypedef` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'VirtualTypedef';
+   }
+
    /** specify ``typedef`` to kind. */
    static _$kind()
    {

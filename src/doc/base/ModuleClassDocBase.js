@@ -53,6 +53,14 @@ export default class ModuleClassDocBase extends ModuleDocBase
    /** @ignore */ static _tag_implements() {}
    /** @ignore */ static _tag_interface() {}
 
+   /**
+    * specify `ModuleClass` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'ModuleClass';
+   }
+
    /** for @implements */
    static _$implements()
    {

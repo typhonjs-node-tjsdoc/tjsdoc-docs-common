@@ -17,6 +17,14 @@ import ModuleDocBase   from './ModuleDocBase.js';
  */
 export default class ModuleFunctionDocBase extends ModuleDocBase
 {
+   /**
+    * specify `ModuleFunction` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'ModuleFunction';
+   }
+
    /** specify ``function`` to kind. */
    static _$kind()
    {

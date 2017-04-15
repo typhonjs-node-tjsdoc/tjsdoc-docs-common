@@ -29,6 +29,14 @@ export default class ModuleFileDoc extends DocBase
       return super.create(docID, null, ast, node, pathResolver, commentTags, eventbus);
    }
 
+   /**
+    * specify `ModuleFile` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'ModuleFile';
+   }
+
    /** specify file content to value.content */
    static _$content()
    {

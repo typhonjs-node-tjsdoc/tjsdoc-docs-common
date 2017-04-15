@@ -16,6 +16,14 @@ export default class VirtualExternalDoc extends DocBase
 
    /** @ignore */ static _tag_external() {}
 
+   /**
+    * specify `VirtualExternal` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'VirtualExternal';
+   }
+
    /** specify ``external`` to kind. */
    static _$kind()
    {

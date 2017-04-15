@@ -25,6 +25,14 @@ export default class TestDocBase extends DocBase
    /** @ignore */ static _tag_test() {}
    /** @ignore */ static _tag_testTarget() {}
 
+   /**
+    * specify `Test` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'Test';
+   }
+
    /** Set kind to `Test`. */
    static _$kind()
    {

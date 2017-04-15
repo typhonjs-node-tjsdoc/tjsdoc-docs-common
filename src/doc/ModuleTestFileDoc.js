@@ -5,6 +5,14 @@ import ModuleFileDoc from './ModuleFileDoc.js';
  */
 export default class ModuleTestFileDoc extends ModuleFileDoc
 {
+   /**
+    * specify `ModuleTestFile` to category.
+    */
+   static _$category()
+   {
+      this._value.category = 'ModuleTestFile';
+   }
+
    /** set ``testFile`` to kind. */
    static _$kind()
    {
