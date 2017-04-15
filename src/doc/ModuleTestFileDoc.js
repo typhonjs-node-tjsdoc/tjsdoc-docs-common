@@ -13,9 +13,9 @@ export default class ModuleTestFileDoc extends ModuleFileDoc
       this._value.category = 'ModuleTestFile';
    }
 
-   /** set ``testFile`` to kind. */
+   /** set `ModuleTestFile` to kind. */
    static _$kind()
    {
-      this._value.kind = 'testFile';
+      this._value.kind = 'ModuleTestFile';
    }
 }
