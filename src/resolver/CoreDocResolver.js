@@ -388,7 +388,7 @@ export default class CoreDocResolver
       {
          if (Array.isArray(doc._custom_dependent_file_paths))
          {
-            const fileDoc = docDB.find({ kind: 'file', filePath: doc.filePath })[0];
+            const fileDoc = docDB.find({ kind: 'ModuleFile', filePath: doc.filePath })[0];
 
             if (!seen(fileDoc, '_custom_dependent_file_paths')) { fileDoc._custom_dependent_file_paths = []; }
 

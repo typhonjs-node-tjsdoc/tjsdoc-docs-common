@@ -45,10 +45,10 @@ export default class ModuleFileDoc extends DocBase
       this._value.content = fs.readFileSync(filePath, { encode: 'utf8' }).toString();
    }
 
-   /** specify ``file`` to kind. */
+   /** specify `ModuleFile` to kind. */
    static _$kind()
    {
-      this._value.kind = 'file';
+      this._value.kind = 'ModuleFile';
    }
 
    /** specify name to longname */
