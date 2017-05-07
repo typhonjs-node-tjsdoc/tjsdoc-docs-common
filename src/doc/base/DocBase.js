@@ -554,12 +554,7 @@ export default class DocBase
     */
    static _$ignore()
    {
-      const tag = this._find(['@ignore']);
-
-      if (tag)
-      {
-         this._value.ignore = true;
-      }
+      if (this._find(['@ignore'])) { this._value.ignore = true; }
    }
 
    /**
