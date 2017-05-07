@@ -49,29 +49,29 @@ export default class CoreDocResolver
       // Must remove common path first as `longname`, `memberof, and `name` are modified.
       if (this._config.removeCommonPath)
       {
-         if (log) { this._eventbus.trigger('log:info:raw', 'resolve: removing common path'); }
+         if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-core-doc-resolver: removing common path'); }
          this._resolveCommonPath(docDB);
       }
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: extends chain'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve extends chain'); }
       this._resolveExtendsChain(docDB);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: necessary'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve necessary'); }
       this._resolveNecessary(docDB);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: access'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve access'); }
       this._resolveAccess(docDB);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: unexported identifier'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve unexported identifier'); }
       this._resolveUnexportIdentifier(docDB);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: undocument identifier'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve undocument identifier'); }
       this._resolveUndocumentIdentifier(docDB);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: duplication'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve duplication'); }
       this._resolveDuplication(docDB);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'resolve: ignore'); }
+      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve ignore'); }
       this._resolveIgnore(docDB);
    }
 
@@ -123,7 +123,7 @@ export default class CoreDocResolver
 
       if (commonPath === '') { return; }
 
-      this._eventbus.trigger('log:info:raw', `common path removed: ${commonPath}`);
+      this._eventbus.trigger('log:info:raw', `tjsdoc-doc-resolver-core - common path removed: ${commonPath}`);
 
       // Escape commonPath.
       commonPath = commonPath.replace(/[\\]/g, '\\');

@@ -20,7 +20,7 @@ export function onPluginLoad(ev)
       filterString: '(tjsdoc-docs-common\/dist|tjsdoc-docs-common\/src)'
    });
 
-   eventbus.trigger('plugins:add', { name: 'tjsdoc-core-doc-resolver', instance: new CoreDocResolver() });
+   eventbus.trigger('plugins:add', { name: 'tjsdoc-doc-resolver-core', instance: new CoreDocResolver() });
 
    // Add event binding to retrieve all common doc object generator classes.
    eventbus.on('tjsdoc:data:docs:common:get', () => CommonDocs);
