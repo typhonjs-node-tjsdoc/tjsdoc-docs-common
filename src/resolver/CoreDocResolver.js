@@ -28,67 +28,77 @@ export default class CoreDocResolver
    {
       this._config = ev.data.config;
 
-      this._mainDocDB = this._eventbus.triggerSync('tjsdoc:data:docdb:get');
+      this._mainDocDB = ev.data.docDB;
    }
 
    /**
     * Resolve various properties.
     *
-    * @param {DocDB} [docDB=this._mainDocDB] - The target DocDB to resolve. Defaults to the main DocDB.
+    * @param {DocDB}    [docDB=this._mainDocDB] - The target DocDB to resolve. Defaults to the main DocDB.
     *
-    * @param {boolean}  [log=true] - If true then logging is output for each resolution stage.
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     *
-    * @param {boolean}  [reset=false] - If true then all existing custom resolver data is removed prior to resolution.
+    * @param {boolean}  [silent=false] - If true then logging is not output for each resolution stage.
+    *
     */
-   resolve({ docDB = this._mainDocDB, log = true, query = void 0, reset = false } = {})
+   resolve({ docDB = this._mainDocDB, filePath = void 0, silent = false } = {})
    {
-      // TODO: consider if resetting is valid
-      // Potentially reset resolver data.
-      // if (reset) { this._eventbus.triggerSync('tjsdoc:data:docdb:query').each((doc => delete doc._resolver); }
-
       // Must remove common path first as `longname`, `memberof, and `name` are modified.
       if (this._config.removeCommonPath)
       {
-         if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-core-doc-resolver: removing common path'); }
-         this._resolveCommonPath(docDB);
+         if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: removing common path'); }
+         this._resolveCommonPath(docDB, filePath);
       }
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve extends chain'); }
-      this._resolveExtendsChain(docDB);
+      if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve extends chain'); }
+      this._resolveExtendsChain(docDB, filePath);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve necessary'); }
-      this._resolveNecessary(docDB);
+      if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve necessary'); }
+      this._resolveNecessary(docDB, filePath);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve access'); }
-      this._resolveAccess(docDB);
+      if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve access'); }
+      this._resolveAccess(docDB, filePath);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve unexported identifier'); }
-      this._resolveUnexportIdentifier(docDB);
+      if (!silent)
+      {
+         this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve unexported identifier');
+      }
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve undocument identifier'); }
-      this._resolveUndocumentIdentifier(docDB);
+      this._resolveUnexportIdentifier(docDB, filePath);
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve duplication'); }
-      this._resolveDuplication(docDB);
+      if (!silent)
+      {
+         this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve undocumented identifier');
+      }
 
-      if (log) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve ignore'); }
-      this._resolveIgnore(docDB);
+      this._resolveUndocumentIdentifier(docDB, filePath);
+
+      if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve duplication'); }
+      this._resolveDuplication(docDB, filePath);
+
+      if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve ignored'); }
+      this._resolveIgnore(docDB, filePath);
+
+      this._resolveTestRelation(docDB, filePath, silent);
    }
 
    /**
     * Resolve access property. If doc does not have access property, the doc is public. but if the name starts with '_',
     * the doc is considered private if TJSDocConfig parameter `autoPrivate` is true.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
     *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     * @private
     */
-   _resolveAccess(docDB)
+   _resolveAccess(docDB, filePath)
    {
       const access = this._config.access || ['public', 'protected', 'private'];
       const autoPrivate = this._config.autoPrivate;
 
-      docDB.query().update(function()
+      docDB.query(filePath ? { filePath } : void 0).update(function()
       {
          if (!this.access)
          {
@@ -109,13 +119,17 @@ export default class CoreDocResolver
    /**
     * Removes any common path from all docs that are not `memory` or `external`.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
     *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     * @private
     */
-   _resolveCommonPath(docDB)
+   _resolveCommonPath(docDB, filePath)
    {
-      const docs = docDB.find({ kind: { '!is': 'ModuleMemory' } }, { kind: { '!is': 'VirtualExternal' } });
+      const docs = filePath ?
+       docDB.find({ kind: { '!is': 'ModuleMemory', filePath } }, { kind: { '!is': 'VirtualExternal', filePath } }) :
+        docDB.find({ kind: { '!is': 'ModuleMemory' } }, { kind: { '!is': 'VirtualExternal' } });
 
       if (docs.length === 0) { return; }
 
@@ -144,13 +158,17 @@ export default class CoreDocResolver
     * Resolve duplicated identifiers. Member docs are possible duplication sources. Other docs are not considered
     * duplicates.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
+    *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     *
     * @private
     */
-   _resolveDuplication(docDB)
+   _resolveDuplication(docDB, filePath)
    {
-      const docs = docDB.find({ kind: ['ClassMember', 'ClassProperty'] });
+      const docs = docDB.find(filePath ? { kind: ['ClassMember', 'ClassProperty'], filePath } :
+       { kind: ['ClassMember', 'ClassProperty'] });
 
       const ignoreId = [];
 
@@ -191,18 +209,22 @@ export default class CoreDocResolver
     * Resolve class extends chain.
     *
     * Add following special properties:
-    * - ``_custom_extends_chain``: ancestor class chain.
-    * - ``_custom_direct_subclasses``: class list that directly extends target doc.
-    * - ``_custom_indirect_subclasses``: class list that indirectly extends target doc.
-    * - ``_custom_indirect_implements``: class list that indirectly implements target doc.
+    * - ``_custom_dependent_file_paths``: file paths for all dependent files.
     * - ``_custom_direct_implemented``: class list that directly implements target doc.
+    * - ``_custom_direct_subclasses``: class list that directly extends target doc.
+    * - ``_custom_extends_chain``: ancestor class chain.
     * - ``_custom_indirect_implemented``: class list that indirectly implements target doc.
+    * - ``_custom_indirect_implements``: class list that indirectly implements target doc.
+    * - ``_custom_indirect_subclasses``: class list that indirectly extends target doc.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
+    *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     *
     * @private
     */
-   _resolveExtendsChain(docDB)
+   _resolveExtendsChain(docDB, filePath)
    {
       /**
        * Tracks which docs need to initialize `_custom_<X>` lists.
@@ -243,6 +265,9 @@ export default class CoreDocResolver
          // traverse super class.
          const chains = [];
 
+//TODO FINISH!
+         const backward_file_dependencies = [];
+
          do
          {
             const superClassDoc = docDB.findByName(doc.extends[0])[0];
@@ -253,6 +278,7 @@ export default class CoreDocResolver
                if (superClassDoc.longname === selfDoc.longname) { break; }
 
                chains.push(superClassDoc.longname);
+               backward_file_dependencies.push(superClassDoc.filePath);
 
                doc = superClassDoc;
             }
@@ -374,7 +400,7 @@ export default class CoreDocResolver
          }
       };
 
-      const docs = docDB.find({ kind: 'ModuleClass' });
+      const docs = filePath ? docDB.find({ kind: 'ModuleClass', filePath }) : docDB.find({ kind: 'ModuleClass' });
 
       for (const doc of docs)
       {
@@ -405,13 +431,16 @@ export default class CoreDocResolver
    /**
     * Resolve ignore property. Remove docs that has ignore property.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
+    *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     *
     * @private
     */
-   _resolveIgnore(docDB)
+   _resolveIgnore(docDB, filePath)
    {
-      const docs = docDB.find({ ignore: true });
+      const docs = docDB.find(filePath ? { ignore: true, filePath } : { ignore: true });
 
       for (const doc of docs)
       {
@@ -437,13 +466,16 @@ export default class CoreDocResolver
     * ``Foo`` is necessary.
     * So, ``Foo`` must be exported by force.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
+    *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     *
     * @private
     */
-   _resolveNecessary(docDB)
+   _resolveNecessary(docDB, filePath)
    {
-      docDB.query({ 'export': false }).update(function()
+      docDB.query(filePath ? { 'export': false, filePath } : { 'export': false }).update(function()
       {
          const doc = this;
          const childNames = [];
@@ -469,32 +501,133 @@ export default class CoreDocResolver
    }
 
    /**
-    * Resolve undocument identifier doc. The ignore property is added docs that have no documentation tags.
-    *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * Resolve tests and identifier relationships adding the following special properties:
+    * - ``_custom_tests``: longnames of test doc.
+    * - ``_custom_test_targets``: longnames of identifier.
     *
     * @private
     */
-   _resolveUndocumentIdentifier(docDB)
+   _resolveTestRelation(docDB, filePath, silent)
+   {
+      /**
+       * Tracks which docs need to initialize `_custom_<X>` lists.
+       * @type {{}}
+       */
+      const seenData = {};
+
+      /**
+       * Stores data in `seenData` by doc.longname -> `_custom_<X>` list name tracking which docs need to initialize
+       * `_custom_<X>` lists. This is necessary to reinitialize as resolving can occur multiple times across the
+       * same data.
+       *
+       * @param {DocObject}   doc - DocObject to test.
+       *
+       * @param {string}      type - `_custom_<X>` list name.
+       *
+       * @returns {boolean} Result if whether the custom list name for the given doc object has already been seen.
+       */
+      const seen = (doc, type) =>
+      {
+         if (typeof seenData[doc.longname] !== 'object') { seenData[doc.longname] = {}; }
+
+         const docData = seenData[doc.longname];
+
+         const typeSeen = docData[type] || false;
+
+         docData[type] = true;
+
+         return typeSeen;
+      };
+
+      const testDocs = docDB.find(filePath ? { kind: 'Test', filePath } : { kind: 'Test' });
+
+      if (!silent && testDocs.length > 0)
+      {
+         this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: resolve test relation');
+      }
+
+      for (const testDoc of testDocs)
+      {
+         const testTargets = testDoc.testTargets;
+
+         if (!testTargets) { continue; }
+
+         for (const testTarget of testTargets)
+         {
+            const doc = docDB.findByName(testTarget)[0];
+
+            if (doc)
+            {
+               if (!seen(doc, '_custom_tests')) { doc._custom_tests = []; }
+
+               doc._custom_tests.push(testDoc.longname);
+
+               if (!seen(testDoc, '_custom_test_targets')) { testDoc._custom_test_targets = []; }
+
+               testDoc._custom_test_targets.push([doc.longname, testTarget]);
+            }
+            else
+            {
+               if (!seen(testDoc, '_custom_test_targets')) { testDoc._custom_test_targets = []; }
+
+               testDoc._custom_test_targets.push([testTarget, testTarget]);
+            }
+         }
+      }
+
+      // test full description
+      for (const testDoc of testDocs)
+      {
+         const desc = [];
+         const parents = (testDoc.memberof.split('~')[1] || '').split('.');
+
+         for (const parent of parents)
+         {
+            const doc = docDB.find({ kind: 'Test', name: parent })[0];
+
+            if (!doc) { continue; }
+
+            desc.push(doc.description);
+         }
+
+         desc.push(testDoc.description);
+         testDoc.testFullDescription = desc.join(' ');
+      }
+   }
+
+   /**
+    * Resolve undocument identifier doc. The ignore property is added docs that have no documentation tags.
+    *
+    * @param {DocDB}    docDB - The target DocDB to resolve.
+    *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
+    *
+    * @private
+    */
+   _resolveUndocumentIdentifier(docDB, filePath)
    {
       if (!this._config.undocumentIdentifier)
       {
-         docDB.query({ undocument: true }).update({ ignore: true });
+         docDB.query(filePath ? { undocument: true, filePath } : { undocument: true }).update({ ignore: true });
       }
    }
 
    /**
     * Resolve unexport identifier doc. The ignore property is added to non-exported docs.
     *
-    * @param {DocDB} docDB - The target DocDB to resolve.
+    * @param {DocDB}    docDB - The target DocDB to resolve.
+    *
+    * @param {boolean}  [filePath=undefined] - Defines a string or array of strings limiting resolution to the given
+    *                                          file paths.
     *
     * @private
     */
-   _resolveUnexportIdentifier(docDB)
+   _resolveUnexportIdentifier(docDB, filePath)
    {
       if (!this._config.unexportIdentifier)
       {
-         docDB.query({ 'export': false }).update({ ignore: true });
+         docDB.query(filePath ? { 'export': false, filePath } : { 'export': false }).update({ ignore: true });
       }
    }
 }
