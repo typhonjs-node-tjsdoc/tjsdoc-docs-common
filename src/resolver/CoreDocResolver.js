@@ -26,7 +26,7 @@ export default class CoreDocResolver
     */
    onPreGenerate(ev)
    {
-      this._config = ev.data.config;
+      this._mainConfig = ev.data.mainConfig;
 
       this._mainDocDB = ev.data.docDB;
    }
@@ -45,7 +45,7 @@ export default class CoreDocResolver
    resolve({ docDB = this._mainDocDB, filePath = void 0, silent = false } = {})
    {
       // Must remove common path first as `longname`, `memberof, and `name` are modified.
-      if (this._config.removeCommonPath)
+      if (this._mainConfig.removeCommonPath)
       {
          if (!silent) { this._eventbus.trigger('log:info:raw', 'tjsdoc-doc-resolver-core: removing common path'); }
          this._resolveCommonPath(docDB, filePath);
@@ -95,8 +95,8 @@ export default class CoreDocResolver
     */
    _resolveAccess(docDB, filePath)
    {
-      const access = this._config.access || ['public', 'protected', 'private'];
-      const autoPrivate = this._config.autoPrivate;
+      const access = this._mainConfig.access || ['public', 'protected', 'private'];
+      const autoPrivate = this._mainConfig.autoPrivate;
 
       docDB.query(filePath ? { filePath } : void 0).update(function()
       {
@@ -607,7 +607,7 @@ export default class CoreDocResolver
     */
    _resolveUndocumentIdentifier(docDB, filePath)
    {
-      if (!this._config.undocumentIdentifier)
+      if (!this._mainConfig.undocumentIdentifier)
       {
          docDB.query(filePath ? { undocument: true, filePath } : { undocument: true }).update({ ignore: true });
       }
@@ -625,7 +625,7 @@ export default class CoreDocResolver
     */
    _resolveUnexportIdentifier(docDB, filePath)
    {
-      if (!this._config.unexportIdentifier)
+      if (!this._mainConfig.unexportIdentifier)
       {
          docDB.query(filePath ? { 'export': false, filePath } : { 'export': false }).update({ ignore: true });
       }

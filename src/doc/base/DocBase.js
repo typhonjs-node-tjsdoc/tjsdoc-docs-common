@@ -72,7 +72,7 @@ export default class DocBase
        * Store all supported path extensions for import file name resolution when no extensions are present.
        * @type {string[]}
        */
-      this._pathExtensions = eventbus.triggerSync('tjsdoc:data:config:get').pathExtensions;
+      this._pathExtensions = eventbus.triggerSync('tjsdoc:data:config:main:get').pathExtensions;
 
       /**
        * Provides an object hash storing which dynamic methods have already been applied.
@@ -159,7 +159,7 @@ export default class DocBase
          }
          else
          {
-            const config = this._eventbus.triggerSync('tjsdoc:data:config:get');
+            const config = this._eventbus.triggerSync('tjsdoc:data:config:main:get');
 
             if (config.debug)
             {
