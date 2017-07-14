@@ -24,7 +24,7 @@ export default class CoreDocResolver
     *
     * @param {PluginEvent}    ev - An event proxy for the main this._eventbus.
     */
-   onPreGenerate(ev)
+   onRuntimePreGenerateAsync(ev)
    {
       this._mainConfig = ev.data.mainConfig;
 

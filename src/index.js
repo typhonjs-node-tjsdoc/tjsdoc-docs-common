@@ -9,7 +9,7 @@ import * as CommonDocs from './doc/';
  *
  * @ignore
  */
-export function onPluginLoad(ev)
+export async function onPluginLoad(ev)
 {
    const eventbus = ev.eventbus;
 
@@ -20,7 +20,8 @@ export function onPluginLoad(ev)
       filterString: '(tjsdoc-docs-common\/dist|tjsdoc-docs-common\/src)'
    });
 
-   eventbus.trigger('plugins:add', { name: 'tjsdoc-doc-resolver-core', instance: new CoreDocResolver() });
+   await eventbus.triggerAsync('plugins:add:async',
+    { name: 'tjsdoc-doc-resolver-core', instance: new CoreDocResolver() });
 
    // Add event binding to retrieve all common doc object generator classes.
    eventbus.on('tjsdoc:data:docs:common:get', () => CommonDocs);
