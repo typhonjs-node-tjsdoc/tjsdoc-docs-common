@@ -20,7 +20,7 @@ export async function onPluginLoad(ev)
       filterString: '(tjsdoc-docs-common\/dist|tjsdoc-docs-common\/src)'
    });
 
-   await eventbus.triggerAsync('plugins:add:async',
+   await eventbus.triggerAsync('plugins:async:add',
     { name: 'tjsdoc-doc-resolver-core', instance: new CoreDocResolver() });
 
    // Add event binding to retrieve all common doc object generator classes.
