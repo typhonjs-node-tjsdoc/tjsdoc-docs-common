@@ -513,10 +513,12 @@ export default class DocBase
 
    /**
     * decide `examples`.
+    *
+    * @param {string} [defaultLanguage='javascript'] - An optional language for highlighting code - see highlight.js
     */
-   static _$example()
+   static _$example(defaultLanguage = 'javascript')
    {
-      const tags = this._findAll(['@example']);
+      const tags = this._findAllTagValues(['@example']);
 
       if (!tags) { return; }
       if (!tags.length) { return; }
@@ -525,7 +527,33 @@ export default class DocBase
 
       for (const tag of tags)
       {
-         this._value.examples.push(tag.tagValue);
+         const result = this._eventbus.triggerSync('tjsdoc:system:parser:param:parse', tag,
+          { type: true, name: false, desc: true });
+
+         // Assign default language if the type is missing and is `*`.
+         const type = (result.types.length >= 1 && result.types[0] === '*' ? defaultLanguage : result.types[0]);
+
+         let language = defaultLanguage;
+         let caption = void 0;
+
+         const commaIndex = type.indexOf(',');
+
+         // `@example` can include a caption string split in the type by the first comma which is non-standard in
+         // regard to type parsing so pull out any caption after the first comma.
+         if (commaIndex !== -1)
+         {
+            language = type.substring(0, commaIndex);
+            caption = type.substring(commaIndex + 1);
+
+            caption = caption.trim();
+            if (caption === '') { caption = void 0; }
+         }
+         else
+         {
+            language = type;
+         }
+
+         this._value.examples.push({ language, code: result.description, caption });
       }
    }
 
